@@ -273,7 +273,7 @@ Principe : **défense en profondeur**. Chaque couche suppose que la précédente
 
 ### Navigateurs et applications
 - Stratégies imposées dans Zen et Edge : **HTTPS uniquement**, **uBlock Origin** forcé, extensions limitées à une liste blanche, enregistrement des mots de passe désactivé.
-- **Gestionnaire de mots de passe** d'équipe (🟡 Bitwarden ou Proton Pass).
+- **Gestionnaire de mots de passe** d'équipe auto-hébergé (section 17).
 - **ESET** (temps réel) et **Intune** (conformité). ⚠️ Intune ne permet pas l'effacement à distance d'un poste Linux : en cas de vol, c'est **LUKS** qui protège les données.
 
 ### Données et sauvegarde
@@ -293,6 +293,39 @@ Principe : **défense en profondeur**. Chaque couche suppose que la précédente
 
 ---
 
+## 17. Gestionnaire de mots de passe : Bitwarden auto-hébergé ✅
+
+Exigence : les coffres doivent être **stockés sur les serveurs de l'étude / de son éditeur**, avec une ergonomie au niveau de Proton Pass. Proton Pass ne peut pas être auto-hébergé : il est écarté ❌ pour l'étude.
+
+### Le « protocole » : Bitwarden
+- **Chiffrement de bout en bout, à connaissance nulle** : le coffre est chiffré sur le poste (AES-256, dérivation de clé Argon2id) avant envoi. Le serveur ne stocke que des données chiffrées et ne connaît jamais le mot de passe maître.
+- **Clients officiels** sur tous les systèmes : application de bureau Linux (Flatpak), extensions Zen/Firefox et Edge, Android, iOS, macOS, Windows.
+- Fonctions équivalentes à Proton Pass : **passkeys**, **codes TOTP**, **partage par collections** entre collaborateurs, générateur d'**alias e-mail** (intégration SimpleLogin ou addy.io), remplissage automatique.
+
+### Serveur : deux options
+| | **Bitwarden officiel auto-hébergé** | **Vaultwarden** |
+|---|---|---|
+| Nature | Serveur de l'éditeur, audité | Réimplémentation communautaire (Rust) |
+| Déploiement | Standard (plusieurs conteneurs) ou *Bitwarden lite* (un seul conteneur, sorti de bêta en décembre 2025) | Un seul conteneur, très léger |
+| Organisations, partage | Licence Teams ou Enterprise | Gratuit |
+| SSO Entra ID | Licence Enterprise | Oui, OpenID Connect depuis la v1.35 |
+| Support, audits | ✅ | ❌ |
+
+**Recommandation : serveur Bitwarden officiel** pour un office notarial (audits de sécurité, support éditeur). Vaultwarden reste acceptable pour un pilote : les **clients sont les mêmes**, et le passage de l'un à l'autre se fait par export/import.
+
+### Hébergement (fourni par l'éditeur du LRA)
+- **Instance séparée** du LRA (machine ou VM dédiée) : un coffre de mots de passe ne doit pas tomber en même temps que l'application métier.
+- Hébergement **en France**, HTTPS uniquement, interface d'administration accessible seulement depuis le réseau de l'étude ou le VPN.
+- **2FA obligatoire** pour tous les comptes, politique de mot de passe maître imposée.
+- **Sauvegardes chiffrées quotidiennes** de la base, avec test de restauration.
+- 🟡 **Récupération de compte** : prévoir la procédure en cas d'oubli du mot de passe maître (récupération par l'administrateur, licence Enterprise) ; sinon le coffre de l'utilisateur est perdu.
+
+### Sur le poste
+- Application **Bitwarden** (Flatpak) et extension imposée dans Zen et Edge, **préconfigurées sur l'adresse du serveur de l'étude**.
+- Enregistrement des mots de passe dans les navigateurs désactivé (section 16).
+
+---
+
 ## Questions ouvertes
 
 1. **Licence M365 exacte** (Business Standard / Business Premium / E3…) ? → conditionne Intune.
@@ -301,5 +334,5 @@ Principe : **défense en profondeur**. Chaque couche suppose que la précédente
 4. **snapd** : conserver ou retirer ?
 5. **Fournisseur IA** par défaut au-delà de Copilot Chat ?
 6. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
-7. ⚠️ **Outils notariaux sous Linux** : la **clé REAL** (lecteur de carte, `pcscd`) et le **logiciel de rédaction d'actes** fonctionnent-ils sous Linux ? Point bloquant à vérifier avant tout déploiement.
-8. **Gestionnaire de mots de passe** d'équipe : Bitwarden ou Proton Pass ?
+7. ✅ **Outils notariaux** : la clé REAL fonctionne sous tous les systèmes ; le LRA actuel ne fonctionne pas sous Linux, un **nouveau LRA 100 % web** (Linux, macOS, Windows) est en développement. Le déploiement Linux suit son calendrier.
+8. **Serveur Bitwarden** : officiel (licence Teams/Enterprise) ou Vaultwarden ?

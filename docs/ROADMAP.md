@@ -38,6 +38,8 @@
 - [ ] DNS over TLS filtrant, stratégies navigateurs (HTTPS uniquement, uBlock, liste blanche d'extensions)
 - [ ] Ubuntu Pro : Livepatch, ESM, USG profil CIS poste de travail
 - [ ] Sauvegarde chiffrée 3-2-1 avec copie hors ligne
+- [ ] Rôle `passwords` : Bitwarden Flatpak + extensions Zen/Edge forcées, URL du serveur préconfigurée
+- [ ] Hors dépôt : serveur Bitwarden auto-hébergé (instance dédiée, France, sauvegardes)
 
 ## Lot 4 — IA
 - [ ] Rôle `ai` : PWA + raccourci global

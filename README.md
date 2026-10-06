@@ -56,6 +56,7 @@ linux-collab/
 │   ├── mail/             # Evolution + evolution-ews (compte Microsoft 365)
 │   ├── visio/            # Teams + Lifesize (PWA), routage des liens de réunion
 │   ├── tools/            # Qalculate! et utilitaires de bureau
+│   ├── passwords/        # Bitwarden (Flatpak + extensions) préconfiguré sur le serveur de l'étude
 │   ├── chat/             # messagerie sécurisée
 │   ├── ai/               # chat IA + raccourci global
 │   └── branding/         # applique theme.yml : dconf système, icônes, curseur, polices, GDM
