@@ -372,7 +372,7 @@ Une liste noire d'applications ne suffit pas (de nouvelles apparaissent chaque m
 | Extensions de navigateur (barres latérales IA) | **Liste blanche** d'extensions dans Zen et Edge, tout le reste interdit |
 | IA intégrées aux navigateurs | Edge : barre latérale et Copilot désactivés (`HubsSidebarEnabled`, stratégies Copilot) ; Zen : chatbot IA désactivé (stratégie `GenerativeAI` 🟡 si supportée par la version de Zen) |
 | Sites installés comme application (PWA) | Blocage des domaines IA (ligne suivante) ; seules les PWA déployées par l'administrateur sont présentes |
-| Sites web d'IA | 🟡 **À confirmer** : blocage des domaines (`chatgpt.com`, `openai.com`, `claude.ai`, `anthropic.com`, `chat.mistral.ai`, `gemini.google.com`, `perplexity.ai`, `deepseek.com`…) dans les stratégies des navigateurs **et** dans `/etc/hosts`, avec DNS over HTTPS des navigateurs désactivé pour qu'ils ne contournent pas ce blocage |
+| Sites web d'IA | 🟡 **À confirmer** : blocage des domaines (`chatgpt.com`, `openai.com`, `claude.ai`, `anthropic.com`, `chat.mistral.ai`, `gemini.google.com`, `perplexity.ai`, `deepseek.com`, `duck.ai`…) dans les stratégies des navigateurs **et** dans `/etc/hosts`, avec DNS over HTTPS des navigateurs désactivé pour qu'ils ne contournent pas ce blocage |
 | Greffons IA d'ONLYOFFICE | Gestionnaire de greffons désactivé, greffon IA retiré |
 
 ### Contrôle
@@ -380,6 +380,23 @@ Une liste noire d'applications ne suffit pas (de nouvelles apparaissent chaque m
 - L'audit de fin de déploiement (lot 5) vérifie qu'aucun binaire, Flatpak, snap ou extension non autorisé n'est présent.
 
 ⚠️ Aucun blocage technique n'empêche un collaborateur d'utiliser une IA **sur son téléphone personnel**. Une **charte d'usage de l'IA** signée par chaque collaborateur complète donc ces mesures.
+
+---
+
+## 20. Moteur de recherche : DuckDuckGo France ✅
+
+**DuckDuckGo, en français et région France, par défaut dans tous les navigateurs** (Zen et Edge).
+
+- Adresse utilisée : **`https://noai.duckduckgo.com/?q={searchTerms}&kl=fr-fr&kad=fr_FR`**
+  - `noai.duckduckgo.com` : version officielle de DuckDuckGo **sans IA** (pas de réponses générées « Search Assist », pas d'accès à **Duck.ai**, pas d'images générées par IA). Cohérent avec la section 19, car Duck.ai donne accès aux modèles d'OpenAI, d'Anthropic et d'autres.
+  - `kl=fr-fr` : résultats de la région France ; `kad=fr_FR` : interface en français.
+  - Suggestions de recherche : `https://duckduckgo.com/ac/?q={searchTerms}&type=list&kl=fr-fr`.
+- **Zen** : stratégie `SearchEngines` (`Add` + `Default`), disponible sur toutes les versions de Firefox depuis la 139 (auparavant réservée à l'ESR).
+- **Edge** : stratégies `DefaultSearchProviderEnabled`, `DefaultSearchProviderName`, `DefaultSearchProviderSearchURL`, `DefaultSearchProviderSuggestURL`, dans `/etc/opt/edge/policies/`.
+- Par défaut **modifiable** par l'utilisateur (stratégies « recommandées » côté Edge). 🟡 Peut être verrouillé si l'étude le souhaite.
+- `duck.ai` est ajouté à la liste des domaines IA bloqués (section 19).
+
+⚠️ **Point technique à valider pour toutes les stratégies de Zen** (moteur de recherche, blocage OneDrive, extensions, IA) : Zen est installé en Flatpak, qui ne lit pas forcément le fichier `policies.json` du système. L'emplacement exact pris en compte par le Flatpak de Zen doit être vérifié sur le poste pilote ; à défaut, Zen sera installé depuis son paquet officiel hors Flatpak.
 
 ---
 

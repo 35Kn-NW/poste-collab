@@ -12,6 +12,7 @@
 - [x] Style clair, accent bleu-vert (`teal`), icônes Papirus
 - [x] Durcissement maximal (section 16), Bitwarden officiel, extinction automatique
 - [x] WhatsApp Web par défaut, installation d'IA impossible, snapd retiré
+- [x] Moteur de recherche : DuckDuckGo France (sans IA)
 - [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, IA autorisée)
 
 ## Lot 1 — Socle sans dépendance M365
@@ -20,11 +21,12 @@
 - [ ] Rôle `purge` (dont clients OneDrive `onedrive` / `insync`)
 - [ ] `group_vars/theme.yml` (style visuel unique)
 - [ ] Rôle `branding` : dconf système, icônes, curseur Bibata, polices Inter/JetBrains Mono, fond clair, icônes Papirus, palette Ptyxis claire, GDM, dock latéral gauche fixe
-- [ ] Rôle `browser` : Zen Flatpak + stratégie de blocage OneDrive
+- [ ] Rôle `browser` : Zen Flatpak + stratégie de blocage OneDrive + DuckDuckGo France sans IA par défaut
+- [ ] 🟡 Valider l'emplacement des stratégies pour Zen en Flatpak
 - [ ] Rôle `tools` : Qalculate! (remplace la calculatrice GNOME, touche Calculatrice)
 
 ## Lot 2 — Microsoft 365
-- [ ] Rôle `browser` : Edge + `URLBlocklist` OneDrive
+- [ ] Rôle `browser` : Edge + `URLBlocklist` OneDrive + DuckDuckGo France sans IA par défaut
 - [ ] Rôle `m365` : Identity Broker, Intune, PWA (sans OneDrive), ONLYOFFICE, polices
 - [ ] Rôle `mail` : Evolution (compte Microsoft 365 / Graph)
 - [ ] Hors dépôt : restriction OneDrive côté tenant (centre d'administration SharePoint)
