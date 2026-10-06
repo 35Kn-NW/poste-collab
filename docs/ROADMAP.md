@@ -41,7 +41,7 @@
 - [ ] USBGuard (liste blanche, dont clé REAL)
 - [ ] Stratégies navigateurs Zen/Edge : HTTPS uniquement, uBlock forcé, liste blanche d'extensions, mots de passe navigateur désactivés
 - [ ] Ubuntu Pro : Livepatch, ESM, USG profil CIS poste de travail (🟡 disponibilité 26.04)
-- [ ] Mises à jour auto + redémarrage planifié / installation à l'extinction
+- [ ] Mises à jour auto installées à l'extinction, aucun redémarrage automatique (Automatic-Reboot false) + Livepatch
 - [ ] journald persistant + auditd
 - [ ] Sauvegarde chiffrée 3-2-1 avec copie hors ligne
 - [ ] Rôle `passwords` : Bitwarden Flatpak + extensions Zen/Edge forcées, URL du serveur préconfigurée

@@ -130,7 +130,7 @@ Contrainte : **secret professionnel** → le choix du fournisseur compte autant 
 ## 11. Socle de sécurité (ajouts) ✅
 
 - **LUKS** à l'installation : non négociable.
-- `unattended-upgrades` (mises à jour de sécurité automatiques).
+- `unattended-upgrades` : mises à jour de sécurité téléchargées automatiquement, **installées à l'extinction** (section 18), **jamais de redémarrage automatique**.
 - `ufw` activé, entrant refusé par défaut.
 - `fwupd` (firmwares), AppArmor actif.
 - **Sauvegarde** : Déjà Dup vers un **NAS de l'étude** (jamais vers OneDrive ni un cloud grand public).
@@ -260,7 +260,7 @@ Principe : **défense en profondeur**. Chaque couche suppose que la précédente
 
 ### Système
 - **Ubuntu Pro** : correctifs noyau à chaud (**Livepatch**), maintenance de sécurité étendue (ESM) et **Ubuntu Security Guide (USG)**, qui applique et audite automatiquement le référentiel **CIS** (profil poste de travail). 🟡 Vérifier la disponibilité d'USG pour 26.04.
-- Mises à jour de sécurité automatiques, avec **redémarrage planifié** hors heures d'ouverture.
+- Mises à jour de sécurité automatiques, **installées à l'extinction du poste**. **Aucun redémarrage ni rallumage automatique** (`Unattended-Upgrade::Automatic-Reboot "false"`) : un poste ne doit jamais redémarrer seul, ni en pleine journée ni pendant les vacances. Les failles du noyau sont corrigées sans redémarrage par **Livepatch**.
 - **AppArmor** en mode strict ; applications Flatpak avec permissions restreintes.
 - Services inutiles désactivés (Avahi, partage d'écran entrant, Bluetooth si inutile).
 - Paramètres noyau durcis (`sysctl`) et sources de logiciels limitées aux dépôts officiels listés.
@@ -345,8 +345,8 @@ Objectif : **économiser l'énergie** et ne pas laisser de poste allumé (et dé
 - Fenêtre affichée dans la session de l'utilisateur par un service systemd utilisateur, avec **zenity** (fourni par Ubuntu).
 - Règle **polkit** autorisant l'extinction forcée par ce seul service.
 - Paramètres dans `group_vars/all.yml` : heure, durée du compte à rebours (60 s), durée du report (60 min), nombre de reports (🟡 illimité ou limité, par exemple jusqu'à 23 h).
-- 🟡 Synergie avec les mises à jour : installer les mises à jour en attente **au moment de l'extinction** (`Unattended-Upgrade::InstallOnShutdown`), pour ne jamais redémarrer un poste en pleine journée.
-- 🟡 Option : rallumage automatique le matin (réveil programmé par le BIOS/UEFI) pour que les postes soient prêts et à jour à l'ouverture.
+- ✅ **Mises à jour installées à l'extinction** (`Unattended-Upgrade::InstallOnShutdown "true"`), qu'elle soit automatique ou manuelle : le poste est à jour au prochain allumage, sans jamais redémarrer en journée.
+- ❌ **Aucun rallumage ni redémarrage automatique** : un poste éteint reste éteint (week-ends, vacances).
 
 ---
 
