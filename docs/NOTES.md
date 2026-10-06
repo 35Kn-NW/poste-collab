@@ -128,6 +128,7 @@ Il n'existe pas d'Office de bureau natif sous Linux. Combinaison retenue :
 
 - **Accès bureau** : PWA de l'IA maison déployée par l'administrateur, ouverte par un **raccourci global** (`Super+Espace`), icône dans le dock.
 - Son domaine est la **seule exception** autorisée dans les filtres IA (liste blanche dans `group_vars/all.yml`).
+- **Adresse provisoire : `https://ia.notaria.com`** (variable `ia_maison_url`). ⚠️ Avant tout déploiement, vérifier que le domaine `notaria.com` appartient bien à l'éditeur : il est déjà enregistré et actif, et une adresse tierce serait ouverte et autorisée sur tous les postes.
 - ❌ Écartés : Microsoft 365 Copilot (Chat compris), ChatGPT, Claude, Mistral (Le Chat), Gemini, Perplexity, DeepSeek, Duck.ai, Meta AI, modèles locaux et toute autre IA.
 
 ---
@@ -439,7 +440,7 @@ Le blocage ciblé de sites de partis politiques n'est **pas retenu à ce stade**
 2. **Nombre de postes** et besoin de **gestion centralisée** (Intune) ou simple déploiement initial ?
 3. **Chat sécurisé** : usage interne seulement, ou aussi avec clients et confrères ?
 4. ✅ **snapd** : retiré (section 19).
-5. **IA maison** : adresse (domaine) de l'IA du logiciel, pour la PWA et la liste blanche.
+5. **IA maison** : adresse provisoire `ia.notaria.com` ; confirmer l'adresse définitive et la propriété du domaine.
 6. **Filtrage politique** : aucun, ou blocage neutre de toute la catégorie « partis politiques » (section 21) ?
 7. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
 7. ✅ **Outils notariaux** : la clé REAL fonctionne sous tous les systèmes ; le LRA actuel ne fonctionne pas sous Linux, un **nouveau LRA 100 % web** (Linux, macOS, Windows) est en développement. Le déploiement Linux suit son calendrier.

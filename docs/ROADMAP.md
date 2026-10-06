@@ -63,7 +63,7 @@
 - [ ] Stratégies navigateurs : IA intégrées désactivées, liste blanche d'extensions
 - [ ] Blocage des domaines IA (navigateurs + /etc/hosts, DoH navigateur désactivé), exception pour l'IA maison
 - [ ] ONLYOFFICE : greffons désactivés
-- [ ] Rôle `ai` : PWA de l'IA maison + raccourci global `Super+Espace`
+- [ ] Rôle `ai` : PWA de l'IA maison (`ia_maison_url`, provisoire : https://ia.notaria.com) + raccourci global `Super+Espace`
 - [ ] Hors dépôt : aucune licence Copilot, Copilot Chat désactivé dans le tenant M365
 
 ## Lot 4 bis — Filtrage web
