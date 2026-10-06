@@ -444,6 +444,6 @@ Objectif : bloquer sur tous les postes les **sites pornographiques**, les **site
 3. **Chat sécurisé** : usage interne seulement, ou aussi avec clients et confrères ?
 4. ✅ **snapd** : retiré (section 19).
 5. **IA maison** : adresse provisoire `ia.notaria.com` ; confirmer l'adresse définitive et la propriété du domaine.
-6. **Filtrage extrême droite** : liste des domaines à fournir par l'étude.
+6. ✅ **Filtrage extrême droite** : RN (`rassemblementnational.fr`) et UDR (`udr.fr`), sous-domaines compris ; liste complétable dans `group_vars/all.yml`.
 7. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
 7. ✅ **Outils notariaux** : la clé REAL fonctionne sous tous les systèmes ; le LRA actuel ne fonctionne pas sous Linux, un **nouveau LRA 100 % web** (Linux, macOS, Windows) est en développement. Le déploiement Linux suit son calendrier.
