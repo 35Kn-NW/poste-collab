@@ -189,8 +189,8 @@ Objectif : un bureau **très moderne**, qui donne envie de travailler dessus.
 ### Proposition : GNOME 50 « signé » par l'étude
 Ubuntu 26.04 livre GNOME 50 en **Wayland uniquement** : animations fluides, gestes du pavé tactile, mise à l'échelle par écran, pas de déchirement d'image. Pour le rendre vraiment moderne et propre à l'étude :
 
-- **Couleur d'accent** aux couleurs de l'étude, **thème clair/sombre automatique** selon l'heure (GNOME ne le fait pas nativement : un petit minuteur systemd bascule le réglage, sans extension).
-- **Fond d'écran maison en deux variantes** (clair et sombre).
+- **Style clair** par défaut, sans bascule automatique (l'utilisateur peut passer en sombre manuellement s'il le souhaite). **Couleur d'accent** choisie parmi les teintes natives de GNOME, au plus près de la charte de l'étude.
+- **Fond d'écran maison clair**.
 - **Dock** en bas, centré et rétractable, avec seulement les applications métier épinglées (Zen, Evolution, Teams, Lifesize, Word, Excel, ONLYOFFICE, Qalculate!, chat IA).
 - **Peu d'extensions**, choisies parmi les plus maintenues (icônes de la zone de notification, flou du shell), car chaque extension peut casser à une mise à jour.
 - **Applications modernes** (libadwaita) partout : Fichiers, Calendrier, Showtime, Ressources.
@@ -202,7 +202,7 @@ Ubuntu 26.04 livre GNOME 50 en **Wayland uniquement** : animations fluides, gest
 
 ## 15. Thème visuel inspiré d'Archcraft ✅
 
-Objectif : retrouver l'allure d'Archcraft (sombre, coloré, icônes et curseurs soignés, fonds d'écran graphiques) **sur GNOME 50**, en restant **léger et insensible aux mises à jour**.
+Objectif : retrouver l'allure d'Archcraft (coloré, icônes et curseurs soignés, fonds d'écran graphiques) en **version claire** **sur GNOME 50**, en restant **léger et insensible aux mises à jour**.
 
 ### Ce qu'est le thème Archcraft
 Archcraft ne crée presque aucun thème lui-même : il **réempaquette des thèmes libres existants** (paquets `archcraft-gtk-theme-*`, `archcraft-icons-*`, `archcraft-cursor-*`) et les applique à des gestionnaires de fenêtres légers (Openbox, bspwm, Hyprland…), pas à GNOME. Par exemple, sa session bspwm utilise le thème GTK Arc-Dark, les icônes Arc-Circle et le curseur Qogirr. On réutilise donc **les composants d'origine**, pas les paquets Archcraft (réservés à Arch).
@@ -214,11 +214,11 @@ Les applications GNOME modernes (libadwaita / GTK 4) **ne supportent pas les th�
 
 | Composant | Choix | Source | Robustesse |
 |---|---|---|---|
-| Couleur d'accent, style sombre | Réglages natifs GNOME | dconf | ✅ Totale (API officielle) |
-| Icônes | **Papirus** (ou Tela / Colloid, familles proposées par Archcraft) | Papirus : paquet Ubuntu `papirus-icon-theme` ; Tela/Colloid : version figée + somme de contrôle | ✅ Fichiers statiques ; si absent, GNOME revient aux icônes par défaut sans casser |
+| Couleur d'accent, **style clair** | Réglages natifs GNOME | dconf | ✅ Totale (API officielle) |
+| Icônes | **Papirus** ✅ (variante claire `Papirus-Light`) | Paquet Ubuntu `papirus-icon-theme` (mis à jour avec le système) | ✅ Fichiers statiques ; si absent, GNOME revient aux icônes par défaut sans casser |
 | Curseur | **Bibata** (ou Qogir, défaut Archcraft bspwm) | Version figée + somme de contrôle | ✅ Fichiers statiques |
 | Polices | **Inter** (interface), **JetBrains Mono** (terminal), **Noto** (déjà fournie) | Paquets Ubuntu `fonts-inter`, `fonts-jetbrains-mono` | ✅ |
-| Fonds d'écran | Création maison **dans l'esprit Archcraft** (graphique, sombre), versions claire et sombre | `files/` du dépôt + fichier XML GNOME | ✅ — les fonds d'Archcraft ne sont pas réutilisés, faute de licence claire |
+| Fonds d'écran | Création maison **dans l'esprit Archcraft** (graphique, lumineux), **version claire** | `files/` du dépôt + fichier XML GNOME | ✅ — les fonds d'Archcraft ne sont pas réutilisés, faute de licence claire |
 | Terminal | Palette de couleurs du thème dans **Ptyxis** (terminal par défaut) | dconf | ✅ |
 | Écran de connexion (GDM) | Logo de l'étude, couleur d'accent | Profil dconf `gdm` (clé officielle `logo`) | ✅ — pas de modification des ressources GDM (fragile) |
 | Écran de démarrage et de saisie LUKS | Thème Plymouth Ubuntu conservé, logo de l'étude en option | 🟡 À valider : le remplacement du logo peut être écrasé par une mise à jour | 🟡 |
@@ -228,7 +228,7 @@ Les applications GNOME modernes (libadwaita / GTK 4) **ne supportent pas les th�
 ### Mécanique reprise d'Archcraft : le « style » comme source unique
 Archcraft change d'un coup tout un « style » (fond d'écran, icônes, curseur, couleurs du terminal) à partir d'un seul fichier. On reprend cette idée proprement :
 
-- Un fichier **`group_vars/theme.yml`** décrit le style : couleur d'accent, mode sombre, icônes, curseur, polices, fonds d'écran, palette du terminal.
+- Un fichier **`group_vars/theme.yml`** décrit le style : couleur d'accent, style clair, icônes, curseur, polices, fonds d'écran, palette du terminal.
 - Le rôle `branding` le traduit en **valeurs par défaut dconf système** (`/etc/dconf/db/local.d/`), éventuellement verrouillées.
 - Changer de style = modifier ce fichier et relancer `ansible-pull` sur le parc.
 - **Retour arrière** immédiat : supprimer le fichier dconf système et lancer `dconf update` ramène le bureau Ubuntu d'origine.
@@ -247,5 +247,5 @@ Archcraft change d'un coup tout un « style » (fond d'écran, icônes, curseur,
 3. **Chat sécurisé** : usage interne seulement, ou aussi avec clients et confrères ?
 4. **snapd** : conserver ou retirer ?
 5. **Fournisseur IA** par défaut au-delà de Copilot Chat ?
-6. **Couleur d'accent** et charte graphique de l'étude pour le fond d'écran ?
-7. **Famille d'icônes** : Papirus (paquet Ubuntu, le plus robuste), Tela ou Colloid ?
+6. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
+7. **Couleur d'accent** exacte : laquelle des teintes GNOME (bleu, sarcelle, vert, jaune, orange, rouge, rose, violet, ardoise) se rapproche le plus de la charte ?

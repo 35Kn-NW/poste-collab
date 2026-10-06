@@ -26,7 +26,7 @@ Le déploiement couvre :
 | Élément | Choix |
 |---|---|
 | Distribution | **Ubuntu 26.04 LTS** — plan B : Debian 13 |
-| Bureau | **GNOME 50** (Wayland), thème inspiré d'Archcraft sans hack GTK (cf. notes §15) |
+| Bureau | **GNOME 50** (Wayland), style clair, icônes Papirus, inspiré d'Archcraft sans hack GTK (cf. notes §15) |
 | Orchestration | `bootstrap.sh` → **`ansible-pull`** depuis ce dépôt |
 | Chiffrement disque | **LUKS** activé à l'installation (obligatoire) |
 

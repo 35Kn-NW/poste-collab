@@ -9,6 +9,7 @@
 - [x] Visioconférence : Teams + Lifesize
 - [x] Calculatrice : Qalculate!
 - [x] Bureau : GNOME 50 + thème inspiré d'Archcraft (sans hack GTK)
+- [x] Style clair + icônes Papirus
 - [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, snapd, IA)
 
 ## Lot 1 — Socle sans dépendance M365
@@ -16,8 +17,7 @@
 - [ ] Rôle `base` (unattended-upgrades, ufw, fwupd, sauvegarde vers NAS)
 - [ ] Rôle `purge` (dont clients OneDrive `onedrive` / `insync`)
 - [ ] `group_vars/theme.yml` (style visuel unique)
-- [ ] Rôle `branding` : dconf système, icônes, curseur Bibata, polices Inter/JetBrains Mono, fonds clair/sombre, palette Ptyxis, GDM
-- [ ] Minuteur systemd de bascule clair/sombre
+- [ ] Rôle `branding` : dconf système, icônes, curseur Bibata, polices Inter/JetBrains Mono, fond clair, icônes Papirus, palette Ptyxis claire, GDM
 - [ ] Rôle `browser` : Zen Flatpak + stratégie de blocage OneDrive
 - [ ] Rôle `tools` : Qalculate! (remplace la calculatrice GNOME, touche Calculatrice)
 
