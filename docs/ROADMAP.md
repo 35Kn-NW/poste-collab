@@ -45,7 +45,7 @@
 - [ ] journald persistant + auditd
 - [ ] Sauvegarde chiffrée 3-2-1 avec copie hors ligne
 - [ ] Rôle `passwords` : Bitwarden Flatpak + extensions Zen/Edge forcées, URL du serveur préconfigurée
-- [ ] Rôle `power` : extinction automatique 21 h, fenêtre de report 60 s, extinction forcée
+- [ ] Rôle `power` : extinction automatique 21 h, fenêtre 60 s, report de 30 min illimité, extinction forcée sans réponse
 - [ ] Hors dépôt : serveur Bitwarden officiel auto-hébergé, licence Enterprise (instance dédiée, France, sauvegardes)
 - [ ] Hors dépôt : MFA obligatoire sur le tenant M365
 - [ ] 🟡 Évaluer la connexion au poste avec le compte Entra ID (authd)

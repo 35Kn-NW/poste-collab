@@ -336,7 +336,7 @@ Objectif : **économiser l'énergie** et ne pas laisser de poste allumé (et dé
 1. À **21 h** (paramétrable), un minuteur systemd déclenche la procédure.
 2. **Aucune session ouverte** (écran de connexion) : extinction immédiate.
 3. **Session ouverte** : une fenêtre bien visible s'affiche au premier plan, avec un **compte à rebours d'une minute** et un bouton **« Je travaille encore »**.
-   - Clic sur le bouton : extinction **reportée d'une heure**, puis la fenêtre réapparaît.
+   - Clic sur le bouton : extinction **reportée de 30 minutes**, puis la fenêtre réapparaît. **Reports illimités**.
    - Pas de réponse en 60 secondes (poste oublié, écran verrouillé) : **extinction forcée**, même si une application la bloque (`systemctl poweroff --ignore-inhibitors`).
 4. Le message prévient que **les documents non enregistrés seront perdus**.
 
@@ -344,7 +344,7 @@ Objectif : **économiser l'énergie** et ne pas laisser de poste allumé (et dé
 - Minuteur et service **systemd** système (`etude-extinction.timer`) : aucune extension GNOME, donc insensible aux mises à jour du bureau.
 - Fenêtre affichée dans la session de l'utilisateur par un service systemd utilisateur, avec **zenity** (fourni par Ubuntu).
 - Règle **polkit** autorisant l'extinction forcée par ce seul service.
-- Paramètres dans `group_vars/all.yml` : heure, durée du compte à rebours (60 s), durée du report (60 min), nombre de reports (🟡 illimité ou limité, par exemple jusqu'à 23 h).
+- Paramètres dans `group_vars/all.yml` : heure, durée du compte à rebours (60 s), durée du report (30 min), reports illimités.
 - ✅ **Mises à jour installées à l'extinction** (`Unattended-Upgrade::InstallOnShutdown "true"`), qu'elle soit automatique ou manuelle : le poste est à jour au prochain allumage, sans jamais redémarrer en journée.
 - ❌ **Aucun rallumage ni redémarrage automatique** : un poste éteint reste éteint (week-ends, vacances).
 
@@ -359,4 +359,3 @@ Objectif : **économiser l'énergie** et ne pas laisser de poste allumé (et dé
 5. **Fournisseur IA** par défaut au-delà de Copilot Chat ?
 6. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
 7. ✅ **Outils notariaux** : la clé REAL fonctionne sous tous les systèmes ; le LRA actuel ne fonctionne pas sous Linux, un **nouveau LRA 100 % web** (Linux, macOS, Windows) est en développement. Le déploiement Linux suit son calendrier.
-8. **Extinction automatique** : heure (21 h proposée), délai de report et nombre de reports autorisés ?
