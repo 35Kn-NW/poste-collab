@@ -189,7 +189,7 @@ Objectif : un bureau **très moderne**, qui donne envie de travailler dessus.
 ### Proposition : GNOME 50 « signé » par l'étude
 Ubuntu 26.04 livre GNOME 50 en **Wayland uniquement** : animations fluides, gestes du pavé tactile, mise à l'échelle par écran, pas de déchirement d'image. Pour le rendre vraiment moderne et propre à l'étude :
 
-- **Style clair** par défaut, sans bascule automatique (l'utilisateur peut passer en sombre manuellement s'il le souhaite). **Couleur d'accent** choisie parmi les teintes natives de GNOME, au plus près de la charte de l'étude.
+- **Style clair** par défaut, sans bascule automatique (l'utilisateur peut passer en sombre manuellement s'il le souhaite). **Couleur d'accent bleu-vert** (teinte native GNOME `teal`, clé dconf `org.gnome.desktop.interface accent-color`).
 - **Fond d'écran maison clair**.
 - **Dock** en bas, centré et rétractable, avec seulement les applications métier épinglées (Zen, Evolution, Teams, Lifesize, Word, Excel, ONLYOFFICE, Qalculate!, chat IA).
 - **Peu d'extensions**, choisies parmi les plus maintenues (icônes de la zone de notification, flou du shell), car chaque extension peut casser à une mise à jour.
@@ -214,7 +214,7 @@ Les applications GNOME modernes (libadwaita / GTK 4) **ne supportent pas les th�
 
 | Composant | Choix | Source | Robustesse |
 |---|---|---|---|
-| Couleur d'accent, **style clair** | Réglages natifs GNOME | dconf | ✅ Totale (API officielle) |
+| Couleur d'accent **bleu-vert (`teal`)**, **style clair** | Réglages natifs GNOME | dconf | ✅ Totale (API officielle) |
 | Icônes | **Papirus** ✅ (variante claire `Papirus-Light`) | Paquet Ubuntu `papirus-icon-theme` (mis à jour avec le système) | ✅ Fichiers statiques ; si absent, GNOME revient aux icônes par défaut sans casser |
 | Curseur | **Bibata** (ou Qogir, défaut Archcraft bspwm) | Version figée + somme de contrôle | ✅ Fichiers statiques |
 | Polices | **Inter** (interface), **JetBrains Mono** (terminal), **Noto** (déjà fournie) | Paquets Ubuntu `fonts-inter`, `fonts-jetbrains-mono` | ✅ |
@@ -248,4 +248,3 @@ Archcraft change d'un coup tout un « style » (fond d'écran, icônes, curseur,
 4. **snapd** : conserver ou retirer ?
 5. **Fournisseur IA** par défaut au-delà de Copilot Chat ?
 6. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
-7. **Couleur d'accent** exacte : laquelle des teintes GNOME (bleu, sarcelle, vert, jaune, orange, rouge, rose, violet, ardoise) se rapproche le plus de la charte ?

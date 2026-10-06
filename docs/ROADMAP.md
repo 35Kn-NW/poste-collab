@@ -9,7 +9,7 @@
 - [x] Visioconférence : Teams + Lifesize
 - [x] Calculatrice : Qalculate!
 - [x] Bureau : GNOME 50 + thème inspiré d'Archcraft (sans hack GTK)
-- [x] Style clair + icônes Papirus
+- [x] Style clair, accent bleu-vert (`teal`), icônes Papirus
 - [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, snapd, IA)
 
 ## Lot 1 — Socle sans dépendance M365
