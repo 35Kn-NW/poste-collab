@@ -8,13 +8,16 @@
 - [x] OneDrive : interdit sur les postes
 - [x] Visioconférence : Teams + Lifesize
 - [x] Calculatrice : Qalculate!
+- [x] Bureau : GNOME 50 + thème inspiré d'Archcraft (sans hack GTK)
 - [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, snapd, IA)
 
 ## Lot 1 — Socle sans dépendance M365
 - [ ] `bootstrap.sh` + `site.yml` + `group_vars/all.yml`
 - [ ] Rôle `base` (unattended-upgrades, ufw, fwupd, sauvegarde vers NAS)
 - [ ] Rôle `purge` (dont clients OneDrive `onedrive` / `insync`)
-- [ ] Rôle `branding` (fond d'écran + dconf verrouillé)
+- [ ] `group_vars/theme.yml` (style visuel unique)
+- [ ] Rôle `branding` : dconf système, icônes, curseur Bibata, polices Inter/JetBrains Mono, fonds clair/sombre, palette Ptyxis, GDM
+- [ ] Minuteur systemd de bascule clair/sombre
 - [ ] Rôle `browser` : Zen Flatpak + stratégie de blocage OneDrive
 - [ ] Rôle `tools` : Qalculate! (remplace la calculatrice GNOME, touche Calculatrice)
 

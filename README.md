@@ -26,7 +26,7 @@ Le déploiement couvre :
 | Élément | Choix |
 |---|---|
 | Distribution | **Ubuntu 26.04 LTS** — plan B : Debian 13 |
-| Bureau | **GNOME 50** (Wayland) retravaillé aux couleurs de l'étude — à confirmer |
+| Bureau | **GNOME 50** (Wayland), thème inspiré d'Archcraft sans hack GTK (cf. notes §15) |
 | Orchestration | `bootstrap.sh` → **`ansible-pull`** depuis ce dépôt |
 | Chiffrement disque | **LUKS** activé à l'installation (obligatoire) |
 
@@ -45,6 +45,7 @@ linux-collab/
 ├── bootstrap.sh          # installe ansible, lance ansible-pull
 ├── site.yml              # playbook principal
 ├── group_vars/all.yml    # paramètres : paquets à purger, domaines bloqués, options…
+├── group_vars/theme.yml  # style visuel : accent, icônes, curseur, polices, fonds, palette
 ├── roles/
 │   ├── base/             # mises à jour auto, ufw, fwupd, AppArmor, sauvegarde NAS
 │   ├── purge/            # jeux, logiciels inutiles, clients OneDrive
@@ -56,7 +57,7 @@ linux-collab/
 │   ├── tools/            # Qalculate! et utilitaires de bureau
 │   ├── chat/             # messagerie sécurisée
 │   ├── ai/               # chat IA + raccourci global
-│   └── branding/         # fond d'écran, profil dconf verrouillé
+│   └── branding/         # applique theme.yml : dconf système, icônes, curseur, polices, GDM
 └── files/
     └── wallpaper.png
 ```
