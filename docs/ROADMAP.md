@@ -17,7 +17,7 @@
 - [ ] Rôle `base` (unattended-upgrades, ufw, fwupd, sauvegarde vers NAS)
 - [ ] Rôle `purge` (dont clients OneDrive `onedrive` / `insync`)
 - [ ] `group_vars/theme.yml` (style visuel unique)
-- [ ] Rôle `branding` : dconf système, icônes, curseur Bibata, polices Inter/JetBrains Mono, fond clair, icônes Papirus, palette Ptyxis claire, GDM
+- [ ] Rôle `branding` : dconf système, icônes, curseur Bibata, polices Inter/JetBrains Mono, fond clair, icônes Papirus, palette Ptyxis claire, GDM, dock latéral gauche fixe
 - [ ] Rôle `browser` : Zen Flatpak + stratégie de blocage OneDrive
 - [ ] Rôle `tools` : Qalculate! (remplace la calculatrice GNOME, touche Calculatrice)
 

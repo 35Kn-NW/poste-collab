@@ -191,7 +191,7 @@ Ubuntu 26.04 livre GNOME 50 en **Wayland uniquement** : animations fluides, gest
 
 - **Style clair** par défaut, sans bascule automatique (l'utilisateur peut passer en sombre manuellement s'il le souhaite). **Couleur d'accent bleu-vert** (teinte native GNOME `teal`, clé dconf `org.gnome.desktop.interface accent-color`).
 - **Fond d'écran maison clair**.
-- **Dock** en bas, centré et rétractable, avec seulement les applications métier épinglées (Zen, Evolution, Teams, Lifesize, Word, Excel, ONLYOFFICE, Qalculate!, chat IA).
+- **Dock vertical sur le côté gauche**, toujours visible, comme la barre latérale de Zen : il ne prend pas de hauteur aux documents (les écrans sont plus larges que hauts). C'est la position native du Dock Ubuntu, donc aucun réglage fragile. Seules les applications métier y sont épinglées (Zen, Evolution, Teams, Lifesize, Word, Excel, ONLYOFFICE, Fichiers, Qalculate!, chat IA).
 - **Peu d'extensions**, choisies parmi les plus maintenues (icônes de la zone de notification, flou du shell), car chaque extension peut casser à une mise à jour.
 - **Applications modernes** (libadwaita) partout : Fichiers, Calendrier, Showtime, Ressources.
 - **Raccourcis métier** : `Super+Espace` pour le chat IA, touche Calculatrice pour Qalculate!.
