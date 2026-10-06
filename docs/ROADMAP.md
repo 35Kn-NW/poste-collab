@@ -11,7 +11,8 @@
 - [x] Bureau : GNOME 50 + thème inspiré d'Archcraft (sans hack GTK)
 - [x] Style clair, accent bleu-vert (`teal`), icônes Papirus
 - [x] Durcissement maximal (section 16), Bitwarden officiel, extinction automatique
-- [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, snapd, IA)
+- [x] WhatsApp Web par défaut, installation d'IA impossible, snapd retiré
+- [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, IA autorisée)
 
 ## Lot 1 — Socle sans dépendance M365
 - [ ] `bootstrap.sh` + `site.yml` + `group_vars/all.yml`
@@ -27,6 +28,7 @@
 - [ ] Rôle `m365` : Identity Broker, Intune, PWA (sans OneDrive), ONLYOFFICE, polices
 - [ ] Rôle `mail` : Evolution (compte Microsoft 365 / Graph)
 - [ ] Hors dépôt : restriction OneDrive côté tenant (centre d'administration SharePoint)
+- [ ] PWA WhatsApp Web
 - [ ] Rôle `visio` : PWA Teams + PWA Lifesize, routage des liens de réunion, PipeWire (annulation d'écho)
 
 ## Lot 3 — Sécurité et communication
@@ -50,11 +52,18 @@
 - [ ] Hors dépôt : MFA obligatoire sur le tenant M365
 - [ ] 🟡 Évaluer la connexion au poste avec le compte Entra ID (authd)
 
-## Lot 4 — IA
-- [ ] Rôle `ai` : PWA + raccourci global
+## Lot 4 — IA (verrouillage)
+- [ ] Retrait de snapd et de la logithèque
+- [ ] polkit : installation Flatpak réservée aux administrateurs
+- [ ] Montage `noexec` de /home, /tmp, /var/tmp
+- [ ] Stratégies navigateurs : IA intégrées désactivées, liste blanche d'extensions
+- [ ] 🟡 Blocage des domaines IA (navigateurs + /etc/hosts, DoH navigateur désactivé)
+- [ ] ONLYOFFICE : greffons désactivés
+- [ ] 🟡 Rôle `ai` : PWA Copilot Chat + raccourci global (si confirmé)
 
 ## Lot 5 — Validation
 - [ ] Test complet sur VM fraîche Ubuntu 26.04
 - [ ] Test de ré-exécution (idempotence)
 - [ ] Audit Lynis + USG/CIS avec score minimal
+- [ ] Audit « aucune IA » : binaires, Flatpak, snap, extensions non autorisés
 - [ ] Procédure d'installation documentée pas à pas

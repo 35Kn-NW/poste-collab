@@ -59,7 +59,7 @@ Options écartées :
 - `apt purge` d'une liste déclarée dans `group_vars/all.yml` : jeux GNOME (`aisleriot`, `gnome-mines`, `gnome-sudoku`, `gnome-mahjongg`…), `rhythmbox`, `cheese`, `transmission-*`, `gnome-calculator` (remplacée par Qalculate!, cf. section 13), etc.
 - `apt autoremove --purge` ensuite.
 - Firefox (snap) retiré si Zen est le navigateur par défaut.
-- 🟡 Décider du sort de **snapd** (conserver ou retirer complètement).
+- **snapd** retiré complètement, ainsi que la logithèque (section 19).
 
 ---
 
@@ -87,6 +87,11 @@ Options écartées :
 | **Olvid** | Solution française certifiée **CSPN par l'ANSSI** — 🟡 vérifier la disponibilité d'un client Linux |
 
 Dépend de l'usage : interne à l'étude uniquement, ou aussi avec clients et confrères.
+
+### WhatsApp : installé par défaut ✅
+- **Il n'existe pas d'application WhatsApp officielle pour Linux.** On utilise **WhatsApp Web** (service officiel de Meta), installé en **PWA Edge** : icône dans le lanceur, fenêtre dédiée, notifications. Zen ne sait pas installer de PWA sous Linux.
+- Clients non officiels (ZapZap, WasIstLos…) écartés ❌ : ce sont des tiers qui manipulent la session WhatsApp.
+- ⚠️ WhatsApp chiffre les messages, mais Meta collecte les métadonnées (qui parle à qui, quand). À réserver aux échanges courants, **jamais aux pièces d'un dossier** couvertes par le secret professionnel.
 
 ---
 
@@ -119,11 +124,12 @@ Il n'existe pas d'Office de bureau natif sous Linux. Combinaison retenue :
 
 ## 10. Chat IA sur le bureau 🟡
 
-Contrainte : **secret professionnel** → le choix du fournisseur compte autant que l'ergonomie.
+Contrainte : **secret professionnel**. **Aucun outil d'IA ne peut être installé par les utilisateurs** (section 19).
 
-- **Par défaut : Microsoft 365 Copilot Chat** avec protection des données entreprise (inclus avec la licence, données restant dans le tenant).
-- **Accès bureau** : PWA ouverte par un **raccourci global** (ex. `Super+Espace`) en fenêtre flottante.
-- **Alternatives** : Claude ou ChatGPT en offre Team/Enterprise (PWA), **Newelle** (application GNOME multi-fournisseurs), **Jan** (modèle 100 % local pour les données les plus sensibles).
+- 🟡 **Seule IA autorisée (à confirmer) : Microsoft 365 Copilot Chat** avec protection des données entreprise : inclus dans la licence, données restant dans le tenant de l'étude.
+- **Accès bureau** : PWA déployée par l'administrateur, ouverte par un **raccourci global** (`Super+Espace`).
+- ❌ Écartés : ChatGPT, Claude, Mistral (Le Chat), Newelle, Jan et toute autre IA, en application comme en extension.
+- Si Copilot Chat n'est pas confirmé, le rôle `ai` est supprimé et le poste ne comporte **aucune IA**.
 
 ---
 
@@ -350,12 +356,39 @@ Objectif : **économiser l'énergie** et ne pas laisser de poste allumé (et dé
 
 ---
 
+## 19. Interdiction d'installer des outils d'IA ✅
+
+Objectif : **aucun outil d'IA ne doit pouvoir être installé** sur les postes (ChatGPT, Claude, Mistral, Gemini, Perplexity, DeepSeek, modèles locaux…), quelle que soit la méthode. Seul l'administrateur décide de ce qui est installé.
+
+Une liste noire d'applications ne suffit pas (de nouvelles apparaissent chaque mois). Le principe est donc l'inverse : **l'utilisateur ne peut rien installer du tout**, et chaque porte d'entrée est fermée.
+
+| Voie d'installation | Blocage |
+|---|---|
+| Paquets système (apt) | Utilisateurs **sans droits `sudo`** (section 16) |
+| Snap (application ChatGPT, Claude…) | **snapd retiré** du poste |
+| Flatpak (Flathub) | Installation système réservée aux administrateurs (**polkit**) ; installation « utilisateur » impossible (voir ligne suivante) |
+| Programmes téléchargés, AppImage, Flatpak utilisateur, modèles locaux (Ollama, LM Studio, Jan) | `/home`, `/tmp` et `/var/tmp` montés en **`noexec`** : rien de ce que l'utilisateur télécharge ne peut s'exécuter |
+| Logithèque (App Center, GNOME Logiciels) | **Retirée** du poste |
+| Extensions de navigateur (barres latérales IA) | **Liste blanche** d'extensions dans Zen et Edge, tout le reste interdit |
+| IA intégrées aux navigateurs | Edge : barre latérale et Copilot désactivés (`HubsSidebarEnabled`, stratégies Copilot) ; Zen : chatbot IA désactivé (stratégie `GenerativeAI` 🟡 si supportée par la version de Zen) |
+| Sites installés comme application (PWA) | Blocage des domaines IA (ligne suivante) ; seules les PWA déployées par l'administrateur sont présentes |
+| Sites web d'IA | 🟡 **À confirmer** : blocage des domaines (`chatgpt.com`, `openai.com`, `claude.ai`, `anthropic.com`, `chat.mistral.ai`, `gemini.google.com`, `perplexity.ai`, `deepseek.com`…) dans les stratégies des navigateurs **et** dans `/etc/hosts`, avec DNS over HTTPS des navigateurs désactivé pour qu'ils ne contournent pas ce blocage |
+| Greffons IA d'ONLYOFFICE | Gestionnaire de greffons désactivé, greffon IA retiré |
+
+### Contrôle
+- La liste des domaines et des extensions autorisées est dans `group_vars/all.yml`, mise à jour sans toucher au code.
+- L'audit de fin de déploiement (lot 5) vérifie qu'aucun binaire, Flatpak, snap ou extension non autorisé n'est présent.
+
+⚠️ Aucun blocage technique n'empêche un collaborateur d'utiliser une IA **sur son téléphone personnel**. Une **charte d'usage de l'IA** signée par chaque collaborateur complète donc ces mesures.
+
+---
+
 ## Questions ouvertes
 
 1. **Licence M365 exacte** (Business Standard / Business Premium / E3…) ? → conditionne Intune.
 2. **Nombre de postes** et besoin de **gestion centralisée** (Intune) ou simple déploiement initial ?
 3. **Chat sécurisé** : usage interne seulement, ou aussi avec clients et confrères ?
-4. **snapd** : conserver ou retirer ?
-5. **Fournisseur IA** par défaut au-delà de Copilot Chat ?
+4. ✅ **snapd** : retiré (section 19).
+5. **IA** : Copilot Chat (dans le tenant) reste-t-il la seule IA autorisée, ou aucune IA du tout ? Faut-il aussi **bloquer les sites web** d'IA, en plus de l'installation ?
 6. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
 7. ✅ **Outils notariaux** : la clé REAL fonctionne sous tous les systèmes ; le LRA actuel ne fonctionne pas sous Linux, un **nouveau LRA 100 % web** (Linux, macOS, Windows) est en développement. Le déploiement Linux suit son calendrier.
