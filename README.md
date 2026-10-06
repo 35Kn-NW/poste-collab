@@ -11,12 +11,12 @@ Un nouveau poste doit être opérationnel avec **une seule commande** après l'i
 Le déploiement couvre :
 
 - **Messagerie** : Evolution connecté à Microsoft 365 (API Graph)
-- **Antivirus** : protection temps réel de niveau professionnel
+- **Antivirus** : ESET Endpoint Antivirus for Linux (protection temps réel, éditeur externe)
 - **Nettoyage** : suppression des jeux et logiciels inutiles
 - **Navigateur** : Zen Browser
 - **Identité visuelle** : fond d'écran maison, appliqué à tous les utilisateurs
 - **Chat sécurisé** : messagerie chiffrée de bout en bout
-- **Microsoft 365** : intégration maximale (SSO, conformité, applications web, OneDrive, édition hors ligne)
+- **Microsoft 365** : intégration maximale (SSO, conformité, applications web, édition hors ligne) — **OneDrive interdit et bloqué**
 - **IA** : chat IA moderne accessible directement depuis le bureau
 
 ## Socle retenu
@@ -41,13 +41,13 @@ curl -fsSL https://raw.githubusercontent.com/35Kn-NW/Linux-collab/main/bootstrap
 linux-collab/
 ├── bootstrap.sh          # installe ansible, lance ansible-pull
 ├── site.yml              # playbook principal
-├── group_vars/all.yml    # paramètres : paquets à purger, antivirus, options…
+├── group_vars/all.yml    # paramètres : paquets à purger, domaines bloqués, options…
 ├── roles/
-│   ├── base/             # mises à jour auto, ufw, fwupd, AppArmor, sauvegarde
-│   ├── purge/            # jeux et logiciels inutiles
-│   ├── antivirus/        # Defender for Endpoint ou ESET
-│   ├── browser/          # Zen (Flatpak) + Edge (M365)
-│   ├── m365/             # Intune, broker Entra ID, PWA, OneDrive, ONLYOFFICE, polices
+│   ├── base/             # mises à jour auto, ufw, fwupd, AppArmor, sauvegarde NAS
+│   ├── purge/            # jeux, logiciels inutiles, clients OneDrive
+│   ├── antivirus/        # ESET Endpoint Antivirus for Linux
+│   ├── browser/          # Zen (Flatpak) + Edge (M365), blocage OneDrive
+│   ├── m365/             # Intune, broker Entra ID, PWA, ONLYOFFICE, polices
 │   ├── mail/             # Evolution + evolution-ews (compte Microsoft 365)
 │   ├── chat/             # messagerie sécurisée
 │   ├── ai/               # chat IA + raccourci global
@@ -58,4 +58,4 @@ linux-collab/
 
 ## Confidentialité
 
-Ce dépôt est **public** : il ne doit contenir **aucun secret** (identifiants de tenant, clés de licence, jetons d'inscription, noms de clients). Ces valeurs seront fournies localement au moment du déploiement (fichier de variables hors dépôt ou Ansible Vault).
+Ce dépôt est **public** : il ne doit contenir **aucun secret** (identifiants de tenant, clé de licence ESET, jetons d'inscription, noms de clients). Ces valeurs seront fournies localement au moment du déploiement (fichier de variables hors dépôt ou Ansible Vault).

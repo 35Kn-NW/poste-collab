@@ -40,15 +40,17 @@ Chaque décision indique son **statut** : ✅ retenue · 🟡 à confirmer · �
 
 ---
 
-## 4. Antivirus 🟡
+## 4. Antivirus : ESET Endpoint Antivirus for Linux ✅
 
-| Option | Avantages | Inconvénients |
-|---|---|---|
-| **Microsoft Defender for Endpoint** | Temps réel, EDR, console unifiée avec les postes Windows ; inclus dans *Defender for Business* (M365 Business Premium) | Dépend de la licence |
-| **ESET Endpoint Antivirus for Linux** | Solide, supporte Ubuntu/Debian, console ESET PROTECT | Licence payante séparée |
-| ClamAV ❌ | Gratuit | Scanner à la demande, pas de vraie protection temps réel : insuffisant |
+Choix d'un **antivirus externe**, indépendant de l'écosystème Microsoft.
 
-**Décision dépendante de la licence M365** (cf. questions ouvertes).
+- **ESET Endpoint Antivirus for Linux** : protection temps réel, supporte officiellement Ubuntu LTS et Debian.
+- Gestion centralisée possible via la console **ESET PROTECT** (agent ESET Management installé sur chaque poste).
+- La **clé de licence** et la configuration de l'agent ne sont **jamais versionnées** : elles sont fournies au déploiement (variables locales ou Ansible Vault).
+
+Options écartées :
+- Microsoft Defender for Endpoint ❌ : choix d'un éditeur externe à Microsoft.
+- ClamAV ❌ : scanner à la demande, pas de vraie protection temps réel, donc insuffisant.
 
 ---
 
@@ -94,9 +96,24 @@ Il n'existe pas d'Office de bureau natif sous Linux. Combinaison retenue :
 
 1. **Edge + Microsoft Identity Broker + inscription Intune** : SSO Entra ID et poste conforme (accès conditionnel).
 2. **PWA Edge** déployées automatiquement : Word, Excel, PowerPoint, Outlook, Teams, SharePoint (icônes dans le lanceur, fenêtres dédiées).
-3. **OneDrive** : client `onedrive` (abraunegg, open source) en service systemd utilisateur — alternative payante : Insync.
-4. **ONLYOFFICE Desktop Editors** : édition hors ligne avec la meilleure fidélité .docx/.xlsx.
-5. **Polices** : `ttf-mscorefonts-installer`, Carlito et Caladea (métriquement compatibles Calibri/Cambria).
+3. **ONLYOFFICE Desktop Editors** : édition hors ligne avec la meilleure fidélité .docx/.xlsx.
+4. **Polices** : `ttf-mscorefonts-installer`, Carlito et Caladea (métriquement compatibles Calibri/Cambria).
+
+### OneDrive : interdit sur les postes ❌
+
+**Aucune utilisation de OneDrive n'est permise.** Le déploiement l'empêche à tous les niveaux du poste :
+
+- **Aucun client de synchronisation** : les paquets `onedrive` (abraunegg) et `insync` sont purgés s'ils sont présents, et aucun dépôt tiers les fournissant n'est ajouté.
+- **Aucune PWA OneDrive** : seules Word, Excel, PowerPoint, Outlook, Teams et SharePoint sont déployées.
+- **Blocage dans les navigateurs** :
+  - Edge : stratégie `URLBlocklist` sur `onedrive.live.com`, `onedrive.com`, `1drv.ms` et `*-my.sharepoint.com` (espaces OneDrive Entreprise).
+  - Zen : stratégie équivalente (`policies.json`, `WebsiteFilter`).
+- **Aucune sauvegarde vers OneDrive** (cf. section 11).
+
+⚠️ Points d'attention :
+- Le blocage sur le poste ne suffit pas à lui seul. Pour une interdiction complète, il faut aussi **restreindre OneDrive côté tenant** (centre d'administration SharePoint/OneDrive, ou retrait de la licence OneDrive des utilisateurs). Cette action se fait hors de ce dépôt.
+- Dans **Teams**, les fichiers partagés en conversation privée sont stockés dans le OneDrive de l'expéditeur. Avec OneDrive bloqué, le partage de fichiers doit passer par les **canaux d'équipe** (stockés dans SharePoint).
+- Les liens Office « Enregistrer sur OneDrive » deviennent inutilisables : l'enregistrement se fait dans **SharePoint** ou en local.
 
 ---
 
@@ -116,13 +133,13 @@ Contrainte : **secret professionnel** → le choix du fournisseur compte autant 
 - `unattended-upgrades` (mises à jour de sécurité automatiques).
 - `ufw` activé, entrant refusé par défaut.
 - `fwupd` (firmwares), AppArmor actif.
-- **Sauvegarde** : Déjà Dup vers OneDrive ou NAS.
+- **Sauvegarde** : Déjà Dup vers un **NAS de l'étude** (jamais vers OneDrive ni un cloud grand public).
 
 ---
 
 ## Questions ouvertes
 
-1. **Licence M365 exacte** (Business Standard / Business Premium / E3…) ? → conditionne l'antivirus et Intune.
+1. **Licence M365 exacte** (Business Standard / Business Premium / E3…) ? → conditionne Intune.
 2. **Nombre de postes** et besoin de **gestion centralisée** (Intune) ou simple déploiement initial ?
 3. **Chat sécurisé** : usage interne seulement, ou aussi avec clients et confrères ?
 4. **snapd** : conserver ou retirer ?
