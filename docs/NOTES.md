@@ -429,8 +429,11 @@ Objectif : bloquer sur tous les postes les **sites pornographiques**, les **site
 - 🟡 Pas de journal nominatif des sites consultés sur le poste (proportionnalité, RGPD) ; seuls les compteurs de blocage sont conservés.
 - ⚠️ À mentionner dans la **charte informatique** de l'étude : les salariés doivent être informés du filtrage.
 
-### Filtrage politique 🟡 en attente de décision
-Le blocage ciblé de sites de partis politiques n'est **pas retenu à ce stade** (risque juridique, voir l'échange du 7 octobre 2026). Option neutre possible : bloquer **toute** la catégorie « partis politiques » sans distinction et rediriger vers **vie-publique.fr** (site public d'information neutre sur la vie politique).
+### Filtrage des sites d'extrême droite ✅ (décision assumée par l'étude)
+- **Décision de l'étude du 7 octobre 2026** : bloquer uniquement les sites de partis et mouvements d'extrême droite.
+- La **liste des domaines est définie et tenue par l'étude** dans `group_vars/all.yml` (variable `blocage_extreme_droite`). Le dépôt fournit le mécanisme, pas le classement politique.
+- Redirection vers une **page interne « Pays des câlins »** (`files/blockpages/calins.html`) : arcs-en-ciel, nuages et message bienveillant. Page originale, sans personnage ni marque protégés (« Bisounours » est une marque déposée).
+- ⚠️ **Risques signalés et acceptés** : discrimination liée aux opinions politiques (Code du travail, art. L1132-1), obligation d'impartialité du notaire en tant qu'officier public, besoin professionnel éventuel de consulter ces sites (client). Recommandé : mentionner ce filtrage dans la **charte informatique** et prévoir une **exception** sur demande pour un besoin professionnel.
 
 ---
 
@@ -441,6 +444,6 @@ Le blocage ciblé de sites de partis politiques n'est **pas retenu à ce stade**
 3. **Chat sécurisé** : usage interne seulement, ou aussi avec clients et confrères ?
 4. ✅ **snapd** : retiré (section 19).
 5. **IA maison** : adresse provisoire `ia.notaria.com` ; confirmer l'adresse définitive et la propriété du domaine.
-6. **Filtrage politique** : aucun, ou blocage neutre de toute la catégorie « partis politiques » (section 21) ?
+6. **Filtrage extrême droite** : liste des domaines à fournir par l'étude.
 7. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
 7. ✅ **Outils notariaux** : la clé REAL fonctionne sous tous les systèmes ; le LRA actuel ne fonctionne pas sous Linux, un **nouveau LRA 100 % web** (Linux, macOS, Windows) est en développement. Le déploiement Linux suit son calendrier.

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pays des câlins</title>
+<style>
+  :root {
+    --ciel-haut: #bfe3ff;
+    --ciel-bas: #ffe4f1;
+    --texte: #4a3b6b;
+    --doux: #7a6a99;
+    --bouton: #ff8fc1;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    font-family: system-ui, "Inter", "Ubuntu Sans", sans-serif;
+    color: var(--texte);
+    background: linear-gradient(var(--ciel-haut), var(--ciel-bas));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 16px;
+  }
+  .nuage {
+    position: absolute;
+    background: #fff;
+    border-radius: 999px;
+    opacity: .9;
+    animation: derive 40s linear infinite;
+  }
+  .nuage::before, .nuage::after {
+    content: "";
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+  }
+  .nuage::before { width: 55%; height: 160%; left: 12%; top: -70%; }
+  .nuage::after  { width: 40%; height: 120%; right: 12%; top: -45%; }
+  .n1 { width: 180px; height: 50px; top: 12%; left: -200px; }
+  .n2 { width: 120px; height: 34px; top: 30%; left: -140px; animation-duration: 55s; animation-delay: -20s; }
+  .n3 { width: 220px; height: 60px; top: 72%; left: -240px; animation-duration: 65s; animation-delay: -35s; }
+  @keyframes derive { to { transform: translateX(calc(100vw + 300px)); } }
+
+  .coeur {
+    position: absolute;
+    bottom: -40px;
+    font-size: 22px;
+    color: #ff8fc1;
+    animation: monte 9s ease-in infinite;
+  }
+  @keyframes monte {
+    0%   { transform: translateY(0) scale(.8); opacity: 0; }
+    15%  { opacity: 1; }
+    100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 560px;
+    width: 100%;
+    background: rgba(255, 255, 255, .78);
+    border-radius: 28px;
+    padding: 32px 28px 28px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(122, 106, 153, .18);
+  }
+  svg.arc { width: 220px; max-width: 70%; height: auto; display: block; margin: 0 auto 8px; }
+  h1 { font-size: 28px; margin: 0 0 12px; }
+  p { font-size: 17px; line-height: 1.6; margin: 0 0 12px; color: var(--doux); }
+  p.fort { color: var(--texte); font-weight: 500; }
+  button {
+    margin-top: 12px;
+    font: inherit;
+    font-size: 16px;
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 26px;
+    background: var(--bouton);
+    color: #fff;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(1.05); }
+  button:focus-visible { outline: 3px solid var(--texte); outline-offset: 3px; }
+  small { display: block; margin-top: 18px; font-size: 13px; color: var(--doux); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nuage, .coeur { animation: none; }
+    .coeur { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="nuage n1" aria-hidden="true"></div>
+  <div class="nuage n2" aria-hidden="true"></div>
+  <div class="nuage n3" aria-hidden="true"></div>
+
+  <main>
+    <svg class="arc" viewBox="0 0 220 120" aria-hidden="true">
+      <path d="M10 115 A100 100 0 0 1 210 115" fill="none" stroke="#ff9aa2" stroke-width="12"/>
+      <path d="M22 115 A88 88 0 0 1 198 115" fill="none" stroke="#ffcf8a" stroke-width="12"/>
+      <path d="M34 115 A76 76 0 0 1 186 115" fill="none" stroke="#fff3a0" stroke-width="12"/>
+      <path d="M46 115 A64 64 0 0 1 174 115" fill="none" stroke="#b5ead7" stroke-width="12"/>
+      <path d="M58 115 A52 52 0 0 1 162 115" fill="none" stroke="#a0d2ff" stroke-width="12"/>
+      <path d="M70 115 A40 40 0 0 1 150 115" fill="none" stroke="#c7b3ff" stroke-width="12"/>
+    </svg>
+    <h1>Bienvenue au pays des câlins</h1>
+    <p class="fort">Le site que vous cherchiez n'est pas accessible depuis les postes de l'étude.</p>
+    <p>Ici, on préfère la tolérance, le respect de chacun et les nuages tout doux.</p>
+    <p>Prenez une grande inspiration, souriez, et retournez à vos actes&nbsp;: ils vous attendent avec bienveillance.</p>
+    <button type="button" onclick="history.length > 1 ? history.back() : window.close()">Revenir en arrière</button>
+    <small>Besoin professionnel de consulter ce site&nbsp;? Contactez l'administrateur de l'étude.</small>
+  </main>
+
+  <script>
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var symboles = ['♥', '♡', '✦'];
+      for (var i = 0; i < 14; i++) {
+        var c = document.createElement('span');
+        c.className = 'coeur';
+        c.setAttribute('aria-hidden', 'true');
+        c.textContent = symboles[i % symboles.length];
+        c.style.left = Math.round(Math.random() * 100) + 'vw';
+        c.style.animationDelay = (Math.random() * 9).toFixed(1) + 's';
+        c.style.fontSize = (16 + Math.round(Math.random() * 16)) + 'px';
+        document.body.appendChild(c);
+      }
+    })();
+  </script>
+</body>
+</html>

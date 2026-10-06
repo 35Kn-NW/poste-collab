@@ -70,6 +70,7 @@
 - [ ] Rôle `webfilter` : Unbound local + listes RPZ par catégorie (pornographie, jeux, menaces, IA), mise à jour quotidienne
 - [ ] Transfert DNS over TLS vers un résolveur filtrant (🟡 Cloudflare for Families)
 - [ ] Extension maison `declarativeNetRequest` (Zen + Edge) : pages de redirection par catégorie
+- [ ] Catégorie extrême droite (liste tenue par l'étude) → page « Pays des câlins »
 - [ ] Liste d'exceptions administrateur
 
 ## Lot 5 — Validation
