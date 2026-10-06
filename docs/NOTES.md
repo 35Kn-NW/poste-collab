@@ -122,14 +122,13 @@ Il n'existe pas d'Office de bureau natif sous Linux. Combinaison retenue :
 
 ---
 
-## 10. Chat IA sur le bureau 🟡
+## 10. IA : uniquement l'IA maison du logiciel de l'étude ✅
 
-Contrainte : **secret professionnel**. **Aucun outil d'IA ne peut être installé par les utilisateurs** (section 19).
+**Seule IA autorisée : l'IA propriétaire intégrée au logiciel de l'étude** (le nouveau LRA web). Aucune autre IA ne doit pouvoir être utilisée, ni installée, ni ouverte dans un navigateur (section 19).
 
-- 🟡 **Seule IA autorisée (à confirmer) : Microsoft 365 Copilot Chat** avec protection des données entreprise : inclus dans la licence, données restant dans le tenant de l'étude.
-- **Accès bureau** : PWA déployée par l'administrateur, ouverte par un **raccourci global** (`Super+Espace`).
-- ❌ Écartés : ChatGPT, Claude, Mistral (Le Chat), Newelle, Jan et toute autre IA, en application comme en extension.
-- Si Copilot Chat n'est pas confirmé, le rôle `ai` est supprimé et le poste ne comporte **aucune IA**.
+- **Accès bureau** : PWA de l'IA maison déployée par l'administrateur, ouverte par un **raccourci global** (`Super+Espace`), icône dans le dock.
+- Son domaine est la **seule exception** autorisée dans les filtres IA (liste blanche dans `group_vars/all.yml`).
+- ❌ Écartés : Microsoft 365 Copilot (Chat compris), ChatGPT, Claude, Mistral (Le Chat), Gemini, Perplexity, DeepSeek, Duck.ai, Meta AI, modèles locaux et toute autre IA.
 
 ---
 
@@ -197,10 +196,10 @@ Ubuntu 26.04 livre GNOME 50 en **Wayland uniquement** : animations fluides, gest
 
 - **Style clair** par défaut, sans bascule automatique (l'utilisateur peut passer en sombre manuellement s'il le souhaite). **Couleur d'accent bleu-vert** (teinte native GNOME `teal`, clé dconf `org.gnome.desktop.interface accent-color`).
 - **Fond d'écran maison clair**.
-- **Dock vertical sur le côté gauche**, toujours visible, comme la barre latérale de Zen : il ne prend pas de hauteur aux documents (les écrans sont plus larges que hauts). C'est la position native du Dock Ubuntu, donc aucun réglage fragile. Seules les applications métier y sont épinglées (Zen, Evolution, Teams, Lifesize, Word, Excel, ONLYOFFICE, Fichiers, Qalculate!, chat IA).
+- **Dock vertical sur le côté gauche**, toujours visible, comme la barre latérale de Zen : il ne prend pas de hauteur aux documents (les écrans sont plus larges que hauts). C'est la position native du Dock Ubuntu, donc aucun réglage fragile. Seules les applications métier y sont épinglées (Zen, Evolution, Teams, Lifesize, Word, Excel, ONLYOFFICE, Fichiers, Qalculate!, IA maison).
 - **Peu d'extensions**, choisies parmi les plus maintenues (icônes de la zone de notification, flou du shell), car chaque extension peut casser à une mise à jour.
 - **Applications modernes** (libadwaita) partout : Fichiers, Calendrier, Showtime, Ressources.
-- **Raccourcis métier** : `Super+Espace` pour le chat IA, touche Calculatrice pour Qalculate!.
+- **Raccourcis métier** : `Super+Espace` pour l'IA maison, touche Calculatrice pour Qalculate!.
 
 **Plan B** : KDE Plasma 6 (Kubuntu 26.04) si l'étude renonce à Intune et privilégie une prise en main immédiate par des utilisateurs venant de Windows.
 
@@ -356,9 +355,9 @@ Objectif : **économiser l'énergie** et ne pas laisser de poste allumé (et dé
 
 ---
 
-## 19. Interdiction d'installer des outils d'IA ✅
+## 19. Aucune autre IA que l'IA maison ✅
 
-Objectif : **aucun outil d'IA ne doit pouvoir être installé** sur les postes (ChatGPT, Claude, Mistral, Gemini, Perplexity, DeepSeek, modèles locaux…), quelle que soit la méthode. Seul l'administrateur décide de ce qui est installé.
+Objectif : **aucune IA autre que celle du logiciel de l'étude ne doit pouvoir être utilisée**, ni installée (ChatGPT, Claude, Mistral, Gemini, Perplexity, DeepSeek, Copilot, modèles locaux…), ni ouverte dans un navigateur. Seul l'administrateur décide de ce qui est installé.
 
 Une liste noire d'applications ne suffit pas (de nouvelles apparaissent chaque mois). Le principe est donc l'inverse : **l'utilisateur ne peut rien installer du tout**, et chaque porte d'entrée est fermée.
 
@@ -372,14 +371,19 @@ Une liste noire d'applications ne suffit pas (de nouvelles apparaissent chaque m
 | Extensions de navigateur (barres latérales IA) | **Liste blanche** d'extensions dans Zen et Edge, tout le reste interdit |
 | IA intégrées aux navigateurs | Edge : barre latérale et Copilot désactivés (`HubsSidebarEnabled`, stratégies Copilot) ; Zen : chatbot IA désactivé (stratégie `GenerativeAI` 🟡 si supportée par la version de Zen) |
 | Sites installés comme application (PWA) | Blocage des domaines IA (ligne suivante) ; seules les PWA déployées par l'administrateur sont présentes |
-| Sites web d'IA | 🟡 **À confirmer** : blocage des domaines (`chatgpt.com`, `openai.com`, `claude.ai`, `anthropic.com`, `chat.mistral.ai`, `gemini.google.com`, `perplexity.ai`, `deepseek.com`, `duck.ai`…) dans les stratégies des navigateurs **et** dans `/etc/hosts`, avec DNS over HTTPS des navigateurs désactivé pour qu'ils ne contournent pas ce blocage |
+| Sites web d'IA | ✅ Blocage des domaines (`chatgpt.com`, `openai.com`, `claude.ai`, `anthropic.com`, `chat.mistral.ai`, `gemini.google.com`, `perplexity.ai`, `deepseek.com`, `duck.ai`, `copilot.microsoft.com`, `meta.ai`…) dans les stratégies des navigateurs **et** dans `/etc/hosts`, avec DNS over HTTPS des navigateurs désactivé pour qu'ils ne contournent pas ce blocage. 🟡 Compléter par la **catégorie « IA »** du résolveur DNS filtrant (section 16) si elle existe, pour suivre les nouveaux services automatiquement. **Exception : le domaine de l'IA maison.** |
+| Copilot dans Microsoft 365 (Word, Outlook, Teams web) | Côté tenant (hors dépôt) : **aucune licence Copilot**, **Copilot Chat désactivé/masqué** dans le centre d'administration Microsoft 365 🟡 selon les options offertes par Microsoft |
 | Greffons IA d'ONLYOFFICE | Gestionnaire de greffons désactivé, greffon IA retiré |
 
 ### Contrôle
 - La liste des domaines et des extensions autorisées est dans `group_vars/all.yml`, mise à jour sans toucher au code.
 - L'audit de fin de déploiement (lot 5) vérifie qu'aucun binaire, Flatpak, snap ou extension non autorisé n'est présent.
 
-⚠️ Aucun blocage technique n'empêche un collaborateur d'utiliser une IA **sur son téléphone personnel**. Une **charte d'usage de l'IA** signée par chaque collaborateur complète donc ces mesures.
+⚠️ Limites techniques :
+- **Meta AI dans WhatsApp** passe par les serveurs de WhatsApp : on ne peut pas la bloquer sans bloquer WhatsApp. Son usage est interdit par la charte.
+- Aucun blocage n'empêche un collaborateur d'utiliser une IA **sur son téléphone personnel**.
+
+Une **charte d'usage de l'IA** signée par chaque collaborateur complète donc ces mesures.
 
 ---
 
@@ -406,6 +410,6 @@ Une liste noire d'applications ne suffit pas (de nouvelles apparaissent chaque m
 2. **Nombre de postes** et besoin de **gestion centralisée** (Intune) ou simple déploiement initial ?
 3. **Chat sécurisé** : usage interne seulement, ou aussi avec clients et confrères ?
 4. ✅ **snapd** : retiré (section 19).
-5. **IA** : Copilot Chat (dans le tenant) reste-t-il la seule IA autorisée, ou aucune IA du tout ? Faut-il aussi **bloquer les sites web** d'IA, en plus de l'installation ?
+5. **IA maison** : adresse (domaine) de l'IA du logiciel, pour la PWA et la liste blanche.
 6. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
 7. ✅ **Outils notariaux** : la clé REAL fonctionne sous tous les systèmes ; le LRA actuel ne fonctionne pas sous Linux, un **nouveau LRA 100 % web** (Linux, macOS, Windows) est en développement. Le déploiement Linux suit son calendrier.

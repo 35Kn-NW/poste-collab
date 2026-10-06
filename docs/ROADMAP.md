@@ -13,7 +13,8 @@
 - [x] Durcissement maximal (section 16), Bitwarden officiel, extinction automatique
 - [x] WhatsApp Web par défaut, installation d'IA impossible, snapd retiré
 - [x] Moteur de recherche : DuckDuckGo France (sans IA)
-- [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, IA autorisée)
+- [x] IA : uniquement l'IA maison, toute autre IA bloquée (installation et web)
+- [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, domaine de l'IA maison)
 
 ## Lot 1 — Socle sans dépendance M365
 - [ ] `bootstrap.sh` + `site.yml` + `group_vars/all.yml`
@@ -59,9 +60,10 @@
 - [ ] polkit : installation Flatpak réservée aux administrateurs
 - [ ] Montage `noexec` de /home, /tmp, /var/tmp
 - [ ] Stratégies navigateurs : IA intégrées désactivées, liste blanche d'extensions
-- [ ] 🟡 Blocage des domaines IA (navigateurs + /etc/hosts, DoH navigateur désactivé)
+- [ ] Blocage des domaines IA (navigateurs + /etc/hosts, DoH navigateur désactivé), exception pour l'IA maison
 - [ ] ONLYOFFICE : greffons désactivés
-- [ ] 🟡 Rôle `ai` : PWA Copilot Chat + raccourci global (si confirmé)
+- [ ] Rôle `ai` : PWA de l'IA maison + raccourci global `Super+Espace`
+- [ ] Hors dépôt : aucune licence Copilot, Copilot Chat désactivé dans le tenant M365
 
 ## Lot 5 — Validation
 - [ ] Test complet sur VM fraîche Ubuntu 26.04

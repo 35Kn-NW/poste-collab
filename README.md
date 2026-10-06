@@ -19,7 +19,7 @@ Le déploiement couvre :
 - **Microsoft 365** : intégration maximale (SSO, conformité, applications web, édition hors ligne) — **OneDrive interdit et bloqué**
 - **Visioconférence** : Microsoft Teams et Lifesize intégrés au bureau
 - **Calculatrice** : Qalculate!, avec historique des résultats conservé
-- **IA** : aucune installation d'outil d'IA possible ; seule IA éventuelle : Copilot Chat déployé par l'administrateur (à confirmer)
+- **IA** : uniquement l'IA maison du logiciel de l'étude, accessible depuis le bureau ; toute autre IA bloquée
 - **WhatsApp** : WhatsApp Web installé par défaut (PWA)
 - **Sécurité** : durcissement maximal (chiffrement, USBGuard, CIS, Bitwarden auto-hébergé)
 - **Énergie** : extinction automatique le soir, avec possibilité de report
@@ -62,7 +62,7 @@ linux-collab/
 │   ├── passwords/        # Bitwarden (Flatpak + extensions) préconfiguré sur le serveur de l'étude
 │   ├── power/            # extinction automatique du soir avec fenêtre de report
 │   ├── chat/             # messagerie sécurisée
-│   ├── ai/               # Copilot Chat seul (à confirmer) + blocage des outils d'IA
+│   ├── ai/               # PWA de l'IA maison + blocage de toute autre IA
 │   └── branding/         # applique theme.yml : dconf système, icônes, curseur, polices, GDM
 └── files/
     └── wallpaper.png
