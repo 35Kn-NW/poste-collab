@@ -6,6 +6,8 @@
 - [x] Notes de décision ([NOTES.md](NOTES.md))
 - [x] Antivirus : ESET Endpoint Antivirus for Linux
 - [x] OneDrive : interdit sur les postes
+- [x] Visioconférence : Teams + Lifesize
+- [x] Calculatrice : Qalculate!
 - [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, snapd, IA)
 
 ## Lot 1 — Socle sans dépendance M365
@@ -14,12 +16,14 @@
 - [ ] Rôle `purge` (dont clients OneDrive `onedrive` / `insync`)
 - [ ] Rôle `branding` (fond d'écran + dconf verrouillé)
 - [ ] Rôle `browser` : Zen Flatpak + stratégie de blocage OneDrive
+- [ ] Rôle `tools` : Qalculate! (remplace la calculatrice GNOME, touche Calculatrice)
 
 ## Lot 2 — Microsoft 365
 - [ ] Rôle `browser` : Edge + `URLBlocklist` OneDrive
 - [ ] Rôle `m365` : Identity Broker, Intune, PWA (sans OneDrive), ONLYOFFICE, polices
 - [ ] Rôle `mail` : Evolution (compte Microsoft 365 / Graph)
 - [ ] Hors dépôt : restriction OneDrive côté tenant (centre d'administration SharePoint)
+- [ ] Rôle `visio` : PWA Teams + PWA Lifesize, routage des liens de réunion, PipeWire (annulation d'écho)
 
 ## Lot 3 — Sécurité et communication
 - [ ] Rôle `antivirus` : ESET (licence et agent ESET PROTECT fournis hors dépôt)

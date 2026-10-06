@@ -56,7 +56,7 @@ Options écartées :
 
 ## 5. Nettoyage des paquets ✅
 
-- `apt purge` d'une liste déclarée dans `group_vars/all.yml` : jeux GNOME (`aisleriot`, `gnome-mines`, `gnome-sudoku`, `gnome-mahjongg`…), `rhythmbox`, `cheese`, `transmission-*`, etc.
+- `apt purge` d'une liste déclarée dans `group_vars/all.yml` : jeux GNOME (`aisleriot`, `gnome-mines`, `gnome-sudoku`, `gnome-mahjongg`…), `rhythmbox`, `cheese`, `transmission-*`, `gnome-calculator` (remplacée par Qalculate!, cf. section 13), etc.
 - `apt autoremove --purge` ensuite.
 - Firefox (snap) retiré si Zen est le navigateur par défaut.
 - 🟡 Décider du sort de **snapd** (conserver ou retirer complètement).
@@ -95,7 +95,7 @@ Dépend de l'usage : interne à l'étude uniquement, ou aussi avec clients et co
 Il n'existe pas d'Office de bureau natif sous Linux. Combinaison retenue :
 
 1. **Edge + Microsoft Identity Broker + inscription Intune** : SSO Entra ID et poste conforme (accès conditionnel).
-2. **PWA Edge** déployées automatiquement : Word, Excel, PowerPoint, Outlook, Teams, SharePoint (icônes dans le lanceur, fenêtres dédiées).
+2. **PWA Edge** déployées automatiquement : Word, Excel, PowerPoint, Outlook, Teams (cf. section 12), SharePoint (icônes dans le lanceur, fenêtres dédiées).
 3. **ONLYOFFICE Desktop Editors** : édition hors ligne avec la meilleure fidélité .docx/.xlsx.
 4. **Polices** : `ttf-mscorefonts-installer`, Carlito et Caladea (métriquement compatibles Calibri/Cambria).
 
@@ -134,6 +134,37 @@ Contrainte : **secret professionnel** → le choix du fournisseur compte autant 
 - `ufw` activé, entrant refusé par défaut.
 - `fwupd` (firmwares), AppArmor actif.
 - **Sauvegarde** : Déjà Dup vers un **NAS de l'étude** (jamais vers OneDrive ni un cloud grand public).
+
+---
+
+## 12. Visioconférence métier : Teams et Lifesize ✅
+
+### Microsoft Teams
+- Microsoft a retiré le client Teams natif pour Linux. La solution officielle est la **PWA Teams dans Edge** : SSO Entra ID, accès conditionnel, flou et arrière-plans, partage d'écran.
+- Installée automatiquement avec les autres PWA M365 (section 9), avec icône dans le lanceur et démarrage optionnel à l'ouverture de session.
+- Alternative écartée ❌ : `teams-for-linux`, un client communautaire non officiel, donc non supporté par Microsoft.
+
+### Lifesize
+- Utilisé via son **application web** (Edge est un navigateur supporté), installée en **PWA** avec icône dédiée dans le lanceur.
+- 🟡 Vérifier si Lifesize propose encore un client de bureau Linux officiel (.deb). S'il existe et qu'il est maintenu, il remplacera la PWA.
+
+### Intégration au bureau
+- 🟡 **Ouverture automatique des liens de réunion** : les liens `teams.microsoft.com` et Lifesize reçus dans Evolution s'ouvriraient directement dans la bonne application (Edge/PWA) plutôt que dans Zen. Cela passe par un petit routeur de liens (gestionnaire `xdg` dédié).
+- **Audio et vidéo** : PipeWire (par défaut sous Ubuntu) avec annulation d'écho activée, et partage d'écran sous Wayland via `xdg-desktop-portal`.
+- 🟡 Valider le matériel de l'étude (webcams, casques, éventuelles salles Lifesize) lors du test sur VM ou poste pilote.
+
+---
+
+## 13. Calculatrice : Qalculate! ✅
+
+Besoin : une calculatrice moderne qui **conserve et affiche l'historique des résultats**.
+
+- **Qalculate!** (`qalculate-gtk`) :
+  - historique visible en permanence et **conservé d'une session à l'autre** ;
+  - réutilisation des résultats précédents (`ans`, clic sur une ligne de l'historique) ;
+  - utile au quotidien d'une étude : **pourcentages**, **calculs de dates** (écart en jours entre deux dates, ajout de délais), conversion de devises et d'unités, fractions.
+- Remplace la calculatrice GNOME, qui est purgée pour éviter les doublons. La touche « Calculatrice » du clavier ouvre Qalculate!.
+- Écartée ❌ : GNOME Calculatrice, dont l'historique est perdu à la fermeture.
 
 ---
 

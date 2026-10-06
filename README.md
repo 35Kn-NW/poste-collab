@@ -17,6 +17,8 @@ Le déploiement couvre :
 - **Identité visuelle** : fond d'écran maison, appliqué à tous les utilisateurs
 - **Chat sécurisé** : messagerie chiffrée de bout en bout
 - **Microsoft 365** : intégration maximale (SSO, conformité, applications web, édition hors ligne) — **OneDrive interdit et bloqué**
+- **Visioconférence** : Microsoft Teams et Lifesize intégrés au bureau
+- **Calculatrice** : Qalculate!, avec historique des résultats conservé
 - **IA** : chat IA moderne accessible directement depuis le bureau
 
 ## Socle retenu
@@ -49,6 +51,8 @@ linux-collab/
 │   ├── browser/          # Zen (Flatpak) + Edge (M365), blocage OneDrive
 │   ├── m365/             # Intune, broker Entra ID, PWA, ONLYOFFICE, polices
 │   ├── mail/             # Evolution + evolution-ews (compte Microsoft 365)
+│   ├── visio/            # Teams + Lifesize (PWA), routage des liens de réunion
+│   ├── tools/            # Qalculate! et utilitaires de bureau
 │   ├── chat/             # messagerie sécurisée
 │   ├── ai/               # chat IA + raccourci global
 │   └── branding/         # fond d'écran, profil dconf verrouillé
