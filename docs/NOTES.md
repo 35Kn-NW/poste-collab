@@ -240,7 +240,9 @@ Archcraft change d'un coup tout un « style » (fond d'écran, icônes, curseur,
 
 ---
 
-## 16. Durcissement maximal du poste 🟡
+## 16. Durcissement maximal du poste ✅
+
+**Toutes les mesures ci-dessous sont retenues** ; les points marqués 🟡 restent à valider techniquement sur poste pilote.
 
 Principe : **défense en profondeur**. Chaque couche suppose que la précédente peut tomber. Tout est appliqué par Ansible (rôle `hardening`) et vérifié automatiquement.
 
@@ -293,7 +295,7 @@ Principe : **défense en profondeur**. Chaque couche suppose que la précédente
 
 ---
 
-## 17. Gestionnaire de mots de passe : Bitwarden auto-hébergé ✅
+## 17. Gestionnaire de mots de passe : Bitwarden officiel auto-hébergé ✅
 
 Exigence : les coffres doivent être **stockés sur les serveurs de l'étude / de son éditeur**, avec une ergonomie au niveau de Proton Pass. Proton Pass ne peut pas être auto-hébergé : il est écarté ❌ pour l'étude.
 
@@ -303,7 +305,7 @@ Exigence : les coffres doivent être **stockés sur les serveurs de l'étude / d
 - Fonctions équivalentes à Proton Pass : **passkeys**, **codes TOTP**, **partage par collections** entre collaborateurs, générateur d'**alias e-mail** (intégration SimpleLogin ou addy.io), remplissage automatique.
 
 ### Serveur : deux options
-| | **Bitwarden officiel auto-hébergé** | **Vaultwarden** |
+| | **Bitwarden officiel auto-hébergé** ✅ | Vaultwarden ❌ |
 |---|---|---|
 | Nature | Serveur de l'éditeur, audité | Réimplémentation communautaire (Rust) |
 | Déploiement | Standard (plusieurs conteneurs) ou *Bitwarden lite* (un seul conteneur, sorti de bêta en décembre 2025) | Un seul conteneur, très léger |
@@ -311,7 +313,7 @@ Exigence : les coffres doivent être **stockés sur les serveurs de l'étude / d
 | SSO Entra ID | Licence Enterprise | Oui, OpenID Connect depuis la v1.35 |
 | Support, audits | ✅ | ❌ |
 
-**Recommandation : serveur Bitwarden officiel** pour un office notarial (audits de sécurité, support éditeur). Vaultwarden reste acceptable pour un pilote : les **clients sont les mêmes**, et le passage de l'un à l'autre se fait par export/import.
+**Décision : serveur Bitwarden officiel** (audits de sécurité, support éditeur), avec une licence **Enterprise** pour le SSO Entra ID, les stratégies imposées et la récupération de compte par l'administrateur. Vaultwarden est écarté ❌.
 
 ### Hébergement (fourni par l'éditeur du LRA)
 - **Instance séparée** du LRA (machine ou VM dédiée) : un coffre de mots de passe ne doit pas tomber en même temps que l'application métier.
@@ -326,6 +328,28 @@ Exigence : les coffres doivent être **stockés sur les serveurs de l'étude / d
 
 ---
 
+## 18. Extinction automatique du soir ✅
+
+Objectif : **économiser l'énergie** et ne pas laisser de poste allumé (et déverrouillable) la nuit en cas d'oubli, sans jamais couper quelqu'un qui travaille encore.
+
+### Fonctionnement
+1. À **21 h** (paramétrable), un minuteur systemd déclenche la procédure.
+2. **Aucune session ouverte** (écran de connexion) : extinction immédiate.
+3. **Session ouverte** : une fenêtre bien visible s'affiche au premier plan, avec un **compte à rebours d'une minute** et un bouton **« Je travaille encore »**.
+   - Clic sur le bouton : extinction **reportée d'une heure**, puis la fenêtre réapparaît.
+   - Pas de réponse en 60 secondes (poste oublié, écran verrouillé) : **extinction forcée**, même si une application la bloque (`systemctl poweroff --ignore-inhibitors`).
+4. Le message prévient que **les documents non enregistrés seront perdus**.
+
+### Mise en œuvre (rôle `power`)
+- Minuteur et service **systemd** système (`etude-extinction.timer`) : aucune extension GNOME, donc insensible aux mises à jour du bureau.
+- Fenêtre affichée dans la session de l'utilisateur par un service systemd utilisateur, avec **zenity** (fourni par Ubuntu).
+- Règle **polkit** autorisant l'extinction forcée par ce seul service.
+- Paramètres dans `group_vars/all.yml` : heure, durée du compte à rebours (60 s), durée du report (60 min), nombre de reports (🟡 illimité ou limité, par exemple jusqu'à 23 h).
+- 🟡 Synergie avec les mises à jour : installer les mises à jour en attente **au moment de l'extinction** (`Unattended-Upgrade::InstallOnShutdown`), pour ne jamais redémarrer un poste en pleine journée.
+- 🟡 Option : rallumage automatique le matin (réveil programmé par le BIOS/UEFI) pour que les postes soient prêts et à jour à l'ouverture.
+
+---
+
 ## Questions ouvertes
 
 1. **Licence M365 exacte** (Business Standard / Business Premium / E3…) ? → conditionne Intune.
@@ -335,4 +359,4 @@ Exigence : les coffres doivent être **stockés sur les serveurs de l'étude / d
 5. **Fournisseur IA** par défaut au-delà de Copilot Chat ?
 6. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
 7. ✅ **Outils notariaux** : la clé REAL fonctionne sous tous les systèmes ; le LRA actuel ne fonctionne pas sous Linux, un **nouveau LRA 100 % web** (Linux, macOS, Windows) est en développement. Le déploiement Linux suit son calendrier.
-8. **Serveur Bitwarden** : officiel (licence Teams/Enterprise) ou Vaultwarden ?
+8. **Extinction automatique** : heure (21 h proposée), délai de report et nombre de reports autorisés ?

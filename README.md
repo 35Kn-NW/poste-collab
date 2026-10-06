@@ -20,6 +20,8 @@ Le déploiement couvre :
 - **Visioconférence** : Microsoft Teams et Lifesize intégrés au bureau
 - **Calculatrice** : Qalculate!, avec historique des résultats conservé
 - **IA** : chat IA moderne accessible directement depuis le bureau
+- **Sécurité** : durcissement maximal (chiffrement, USBGuard, CIS, Bitwarden auto-hébergé)
+- **Énergie** : extinction automatique le soir, avec possibilité de report
 
 ## Socle retenu
 
@@ -57,6 +59,7 @@ linux-collab/
 │   ├── visio/            # Teams + Lifesize (PWA), routage des liens de réunion
 │   ├── tools/            # Qalculate! et utilitaires de bureau
 │   ├── passwords/        # Bitwarden (Flatpak + extensions) préconfiguré sur le serveur de l'étude
+│   ├── power/            # extinction automatique du soir avec fenêtre de report
 │   ├── chat/             # messagerie sécurisée
 │   ├── ai/               # chat IA + raccourci global
 │   └── branding/         # applique theme.yml : dconf système, icônes, curseur, polices, GDM
