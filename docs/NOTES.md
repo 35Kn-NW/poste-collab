@@ -145,8 +145,9 @@ Contrainte : **secret professionnel** → le choix du fournisseur compte autant 
 - Alternative écartée ❌ : `teams-for-linux`, un client communautaire non officiel, donc non supporté par Microsoft.
 
 ### Lifesize
-- Utilisé via son **application web** (Edge est un navigateur supporté), installée en **PWA** avec icône dédiée dans le lanceur.
-- 🟡 Vérifier si Lifesize propose encore un client de bureau Linux officiel (.deb). S'il existe et qu'il est maintenu, il remplacera la PWA.
+- **Vérifié (octobre 2026) : il n'existe pas de client Lifesize natif pour Linux.** La page officielle des téléchargements ne propose l'application de bureau que pour Windows et macOS (et des applications mobiles Android/iOS).
+- Lifesize fournit une **application web** officielle pour **Google Chrome et Microsoft Edge**. Elle sera installée en **PWA Edge**, avec une icône dédiée dans le lanceur.
+- ⚠️ Lifesize ne cite pas Linux parmi les systèmes officiellement supportés pour son application web. Elle fonctionne sous Edge pour Linux, mais **un test sur poste pilote est indispensable** (caméra, micro, partage d'écran, rejoindre une salle Lifesize).
 
 ### Intégration au bureau
 - 🟡 **Ouverture automatique des liens de réunion** : les liens `teams.microsoft.com` et Lifesize reçus dans Evolution s'ouvriraient directement dans la bonne application (Edge/PWA) plutôt que dans Zen. Cela passe par un petit routeur de liens (gestionnaire `xdg` dédié).
@@ -168,6 +169,37 @@ Besoin : une calculatrice moderne qui **conserve et affiche l'historique des ré
 
 ---
 
+## 14. Environnement de bureau : GNOME 50, retravaillé 🟡
+
+Objectif : un bureau **très moderne**, qui donne envie de travailler dessus.
+
+### Contrainte décisive
+**Intune n'accepte que les postes Ubuntu sous GNOME** (Ubuntu 24.04 et 26.04 LTS, depuis la version 3.0.2 du 27 avril 2026). Choisir KDE ou COSMIC revient à renoncer à Intune, et donc au poste « conforme » pour l'accès conditionnel M365.
+
+### Comparatif
+
+| | GNOME 50 | KDE Plasma 6 | COSMIC |
+|---|---|---|---|
+| Esthétique | Épurée, très actuelle (libadwaita) | Moderne, proche de Windows 11 | Moderne, en tuiles |
+| Compatible Intune | ✅ | ❌ | ❌ |
+| Prise en main depuis Windows | Moyenne : demande une courte formation | Excellente : barre des tâches et menu Démarrer | Moyenne |
+| Stabilité, maturité | Très élevée, défaut d'Ubuntu | Élevée | Jeune (1.0 fin 2025) |
+| Verrouillage des réglages | dconf (simple) | Kiosk (plus complexe) | Limité |
+
+### Proposition : GNOME 50 « signé » par l'étude
+Ubuntu 26.04 livre GNOME 50 en **Wayland uniquement** : animations fluides, gestes du pavé tactile, mise à l'échelle par écran, pas de déchirement d'image. Pour le rendre vraiment moderne et propre à l'étude :
+
+- **Couleur d'accent** aux couleurs de l'étude, **thème clair/sombre automatique** selon l'heure.
+- **Fond d'écran maison en deux variantes** (clair et sombre).
+- **Dock** en bas, centré et rétractable, avec seulement les applications métier épinglées (Zen, Evolution, Teams, Lifesize, Word, Excel, ONLYOFFICE, Qalculate!, chat IA).
+- **Peu d'extensions**, choisies parmi les plus maintenues (icônes de la zone de notification, flou du shell), car chaque extension peut casser à une mise à jour.
+- **Applications modernes** (libadwaita) partout : Fichiers, Calendrier, Showtime, Ressources.
+- **Raccourcis métier** : `Super+Espace` pour le chat IA, touche Calculatrice pour Qalculate!.
+
+**Plan B** : KDE Plasma 6 (Kubuntu 26.04) si l'étude renonce à Intune et privilégie une prise en main immédiate par des utilisateurs venant de Windows.
+
+---
+
 ## Questions ouvertes
 
 1. **Licence M365 exacte** (Business Standard / Business Premium / E3…) ? → conditionne Intune.
@@ -175,3 +207,5 @@ Besoin : une calculatrice moderne qui **conserve et affiche l'historique des ré
 3. **Chat sécurisé** : usage interne seulement, ou aussi avec clients et confrères ?
 4. **snapd** : conserver ou retirer ?
 5. **Fournisseur IA** par défaut au-delà de Copilot Chat ?
+6. **Environnement de bureau** : GNOME 50 retravaillé (compatible Intune) ou KDE Plasma 6 (sans Intune) ?
+7. **Couleur d'accent** et charte graphique de l'étude pour le fond d'écran ?

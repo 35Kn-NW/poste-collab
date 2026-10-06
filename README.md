@@ -25,7 +25,8 @@ Le déploiement couvre :
 
 | Élément | Choix |
 |---|---|
-| Distribution | **Ubuntu 26.04 LTS** (GNOME) — plan B : Debian 13 |
+| Distribution | **Ubuntu 26.04 LTS** — plan B : Debian 13 |
+| Bureau | **GNOME 50** (Wayland) retravaillé aux couleurs de l'étude — à confirmer |
 | Orchestration | `bootstrap.sh` → **`ansible-pull`** depuis ce dépôt |
 | Chiffrement disque | **LUKS** activé à l'installation (obligatoire) |
 
