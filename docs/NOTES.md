@@ -404,6 +404,35 @@ Une **charte d'usage de l'IA** signée par chaque collaborateur complète donc c
 
 ---
 
+## 21. Filtrage web : sites interdits et dangereux ✅
+
+Objectif : bloquer sur tous les postes les **sites pornographiques**, les **sites dangereux** (logiciels malveillants, hameçonnage, arnaques) et les **jeux d'argent**, en plus des IA (section 19). La mesure doit fonctionner **au bureau comme en télétravail**, et pour toutes les applications, pas seulement les navigateurs.
+
+### Architecture en deux couches
+1. **Résolveur DNS local sur chaque poste : Unbound** (paquet Ubuntu), avec :
+   - des **listes de blocage par catégorie** (listes publiques maintenues de type HaGeZi : pornographie, jeux d'argent, menaces/hameçonnage, IA), chargées au format RPZ et **mises à jour chaque jour** par un minuteur systemd. En cas d'échec du téléchargement, la dernière liste valide est conservée ;
+   - un **transfert chiffré (DNS over TLS)** vers un résolveur filtrant de second niveau (🟡 Cloudflare for Families, qui bloque déjà logiciels malveillants et contenus adultes) ;
+   - les navigateurs ne peuvent pas le contourner : **DNS over HTTPS désactivé** par stratégie, utilisateurs sans droits administrateur.
+2. **Extension maison de filtrage**, imposée dans Zen et Edge (seule extension ajoutée à la liste blanche), pour afficher une **page de redirection lisible** au lieu d'une erreur de connexion (un blocage DNS seul ne peut pas afficher de page sur un site HTTPS). Elle utilise l'API standard `declarativeNetRequest`, commune à Firefox et Edge.
+
+### Pages de redirection (« intelligentes »)
+| Catégorie bloquée | Redirection |
+|---|---|
+| IA externes | Vers **l'IA maison** du logiciel de l'étude : « Cette IA n'est pas autorisée. Utilisez celle de l'étude. » |
+| Hameçonnage, logiciels malveillants, arnaques | Vers **cybermalveillance.gouv.fr** (dispositif national d'assistance), avec un message : « Ce site a été identifié comme dangereux. Bonne nouvelle : vous n'avez rien risqué. » |
+| Pornographie, jeux d'argent | Page interne neutre : « Ce site n'est pas accessible depuis les postes de l'étude. » |
+
+### Contrôle
+- Catégories, listes, exceptions et pages de redirection paramétrées dans `group_vars/all.yml`.
+- Un site bloqué par erreur est débloqué par l'administrateur via une **liste d'exceptions**.
+- 🟡 Pas de journal nominatif des sites consultés sur le poste (proportionnalité, RGPD) ; seuls les compteurs de blocage sont conservés.
+- ⚠️ À mentionner dans la **charte informatique** de l'étude : les salariés doivent être informés du filtrage.
+
+### Filtrage politique 🟡 en attente de décision
+Le blocage ciblé de sites de partis politiques n'est **pas retenu à ce stade** (risque juridique, voir l'échange du 7 octobre 2026). Option neutre possible : bloquer **toute** la catégorie « partis politiques » sans distinction et rediriger vers **vie-publique.fr** (site public d'information neutre sur la vie politique).
+
+---
+
 ## Questions ouvertes
 
 1. **Licence M365 exacte** (Business Standard / Business Premium / E3…) ? → conditionne Intune.
@@ -411,5 +440,6 @@ Une **charte d'usage de l'IA** signée par chaque collaborateur complète donc c
 3. **Chat sécurisé** : usage interne seulement, ou aussi avec clients et confrères ?
 4. ✅ **snapd** : retiré (section 19).
 5. **IA maison** : adresse (domaine) de l'IA du logiciel, pour la PWA et la liste blanche.
-6. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
+6. **Filtrage politique** : aucun, ou blocage neutre de toute la catégorie « partis politiques » (section 21) ?
+7. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
 7. ✅ **Outils notariaux** : la clé REAL fonctionne sous tous les systèmes ; le LRA actuel ne fonctionne pas sous Linux, un **nouveau LRA 100 % web** (Linux, macOS, Windows) est en développement. Le déploiement Linux suit son calendrier.

@@ -60,6 +60,7 @@ linux-collab/
 │   ├── visio/            # Teams + Lifesize (PWA), routage des liens de réunion
 │   ├── tools/            # Qalculate! et utilitaires de bureau
 │   ├── passwords/        # Bitwarden (Flatpak + extensions) préconfiguré sur le serveur de l'étude
+│   ├── webfilter/        # Unbound + listes par catégorie, extension de redirection
 │   ├── power/            # extinction automatique du soir avec fenêtre de report
 │   ├── chat/             # messagerie sécurisée
 │   ├── ai/               # PWA de l'IA maison + blocage de toute autre IA

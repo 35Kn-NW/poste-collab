@@ -14,6 +14,7 @@
 - [x] WhatsApp Web par défaut, installation d'IA impossible, snapd retiré
 - [x] Moteur de recherche : DuckDuckGo France (sans IA)
 - [x] IA : uniquement l'IA maison, toute autre IA bloquée (installation et web)
+- [x] Filtrage web : pornographie, jeux d'argent, sites dangereux
 - [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, domaine de l'IA maison)
 
 ## Lot 1 — Socle sans dépendance M365
@@ -64,6 +65,12 @@
 - [ ] ONLYOFFICE : greffons désactivés
 - [ ] Rôle `ai` : PWA de l'IA maison + raccourci global `Super+Espace`
 - [ ] Hors dépôt : aucune licence Copilot, Copilot Chat désactivé dans le tenant M365
+
+## Lot 4 bis — Filtrage web
+- [ ] Rôle `webfilter` : Unbound local + listes RPZ par catégorie (pornographie, jeux, menaces, IA), mise à jour quotidienne
+- [ ] Transfert DNS over TLS vers un résolveur filtrant (🟡 Cloudflare for Families)
+- [ ] Extension maison `declarativeNetRequest` (Zen + Edge) : pages de redirection par catégorie
+- [ ] Liste d'exceptions administrateur
 
 ## Lot 5 — Validation
 - [ ] Test complet sur VM fraîche Ubuntu 26.04
