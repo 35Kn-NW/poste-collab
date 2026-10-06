@@ -240,6 +240,59 @@ Archcraft change d'un coup tout un « style » (fond d'écran, icônes, curseur,
 
 ---
 
+## 16. Durcissement maximal du poste 🟡
+
+Principe : **défense en profondeur**. Chaque couche suppose que la précédente peut tomber. Tout est appliqué par Ansible (rôle `hardening`) et vérifié automatiquement.
+
+### Démarrage et disque
+- **Secure Boot** activé, **mot de passe UEFI**, démarrage sur USB/réseau désactivé.
+- **LUKS2** (déjà retenu). 🟡 Déverrouillage **TPM2 + code PIN** si l'installeur d'Ubuntu 26.04 le propose de façon stable ; sinon phrase de passe.
+- **Clé de récupération LUKS** conservée hors ligne (coffre de l'étude), jamais sur le poste ni dans le dépôt.
+
+### Comptes et sessions
+- Utilisateurs **standard, sans droits `sudo`** ; un compte d'administration distinct.
+- **Verrouillage automatique** après 5 minutes, verrouillé (dconf) ; pas de session invitée.
+- Politique de mots de passe (`pam_pwquality`) et blocage après échecs répétés (`pam_faillock`).
+- **MFA obligatoire** sur Microsoft 365 (côté tenant).
+- 🟡 Connexion au poste avec le compte Entra ID via **authd** (Ubuntu), à évaluer.
+
+### Système
+- **Ubuntu Pro** : correctifs noyau à chaud (**Livepatch**), maintenance de sécurité étendue (ESM) et **Ubuntu Security Guide (USG)**, qui applique et audite automatiquement le référentiel **CIS** (profil poste de travail). 🟡 Vérifier la disponibilité d'USG pour 26.04.
+- Mises à jour de sécurité automatiques, avec **redémarrage planifié** hors heures d'ouverture.
+- **AppArmor** en mode strict ; applications Flatpak avec permissions restreintes.
+- Services inutiles désactivés (Avahi, partage d'écran entrant, Bluetooth si inutile).
+- Paramètres noyau durcis (`sysctl`) et sources de logiciels limitées aux dépôts officiels listés.
+
+### Réseau
+- `ufw` : **tout entrant refusé**.
+- **DNS chiffré (DNS over TLS)** vers un résolveur filtrant les domaines malveillants.
+- Télétravail : **VPN WireGuard** vers l'étude uniquement.
+
+### Périphériques
+- **USBGuard** : seuls les périphériques USB autorisés fonctionnent (clavier, souris, webcam, **clé REAL**). Les clés USB de stockage inconnues sont bloquées, principale voie d'entrée des rançongiciels et de fuite de données.
+
+### Navigateurs et applications
+- Stratégies imposées dans Zen et Edge : **HTTPS uniquement**, **uBlock Origin** forcé, extensions limitées à une liste blanche, enregistrement des mots de passe désactivé.
+- **Gestionnaire de mots de passe** d'équipe (🟡 Bitwarden ou Proton Pass).
+- **ESET** (temps réel) et **Intune** (conformité). ⚠️ Intune ne permet pas l'effacement à distance d'un poste Linux : en cas de vol, c'est **LUKS** qui protège les données.
+
+### Données et sauvegarde
+- **Sauvegarde 3-2-1** : NAS de l'étude, **chiffrée**, plus une copie **hors ligne** (protection contre les rançongiciels).
+- OneDrive interdit (section 9).
+
+### Contrôle
+- Audit automatique **Lynis** et **USG/CIS** après chaque déploiement, avec un score minimal à atteindre (lot 5).
+- Journaux persistants (`journald`) et `auditd` sur les événements sensibles.
+
+### Ordre de priorité
+1. LUKS + Secure Boot + mot de passe UEFI
+2. Utilisateurs sans droits d'administration + verrouillage automatique
+3. Mises à jour automatiques + Livepatch
+4. USBGuard
+5. Sauvegarde chiffrée avec copie hors ligne
+
+---
+
 ## Questions ouvertes
 
 1. **Licence M365 exacte** (Business Standard / Business Premium / E3…) ? → conditionne Intune.
@@ -248,3 +301,5 @@ Archcraft change d'un coup tout un « style » (fond d'écran, icônes, curseur,
 4. **snapd** : conserver ou retirer ?
 5. **Fournisseur IA** par défaut au-delà de Copilot Chat ?
 6. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
+7. ⚠️ **Outils notariaux sous Linux** : la **clé REAL** (lecteur de carte, `pcscd`) et le **logiciel de rédaction d'actes** fonctionnent-ils sous Linux ? Point bloquant à vérifier avant tout déploiement.
+8. **Gestionnaire de mots de passe** d'équipe : Bitwarden ou Proton Pass ?

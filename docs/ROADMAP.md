@@ -32,10 +32,18 @@
 - [ ] Rôle `antivirus` : ESET (licence et agent ESET PROTECT fournis hors dépôt)
 - [ ] Rôle `chat`
 
+## Lot 3 bis — Durcissement
+- [ ] Rôle `hardening` : comptes sans sudo, verrouillage auto, pam_pwquality/faillock, sysctl, services inutiles off
+- [ ] USBGuard (liste blanche, dont clé REAL)
+- [ ] DNS over TLS filtrant, stratégies navigateurs (HTTPS uniquement, uBlock, liste blanche d'extensions)
+- [ ] Ubuntu Pro : Livepatch, ESM, USG profil CIS poste de travail
+- [ ] Sauvegarde chiffrée 3-2-1 avec copie hors ligne
+
 ## Lot 4 — IA
 - [ ] Rôle `ai` : PWA + raccourci global
 
 ## Lot 5 — Validation
 - [ ] Test complet sur VM fraîche Ubuntu 26.04
 - [ ] Test de ré-exécution (idempotence)
+- [ ] Audit Lynis + USG/CIS avec score minimal
 - [ ] Procédure d'installation documentée pas à pas

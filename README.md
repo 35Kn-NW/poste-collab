@@ -49,6 +49,7 @@ linux-collab/
 ├── roles/
 │   ├── base/             # mises à jour auto, ufw, fwupd, AppArmor, sauvegarde NAS
 │   ├── purge/            # jeux, logiciels inutiles, clients OneDrive
+│   ├── hardening/        # USBGuard, PAM, sysctl, DNS chiffré, USG/CIS, auditd
 │   ├── antivirus/        # ESET Endpoint Antivirus for Linux
 │   ├── browser/          # Zen (Flatpak) + Edge (M365), blocage OneDrive
 │   ├── m365/             # Intune, broker Entra ID, PWA, ONLYOFFICE, polices
