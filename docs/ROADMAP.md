@@ -27,7 +27,8 @@ _État au 7 octobre 2026 — Linux 0.3.0. ✅ fait et testé en conteneur · �
 | Pastilles REAL / Base étude / VPN | 🔧 | `sondes_etat` : hôtes à tester à fournir |
 
 ## Restant à faire (Linux)
-- [ ] ⏳ Pages de redirection (« Pays des câlins », IA → IA maison) : extension de navigateur à faire signer par Mozilla (les blocages fonctionnent déjà, avec la page standard du navigateur)
+- [x] Pages locales de blocage (« Pays des câlins », IA → IA métier) installées sur le poste, et extension de redirection écrite (`linux/extension-filtrage/`)
+- [ ] 🔧 Signer l'extension une fois (compte développeur Mozilla de l'étude, mode « non listé ») : `signer.sh`, puis `extension_filtrage_signee: true`
 - [ ] ⏳ Retrait du greffon IA d'ONLYOFFICE
 - [ ] ⏳ Blocage des comptes après échecs répétés (pam_faillock) : à valider sur poste pilote avant activation
 - [ ] ⏳ Palette claire du terminal

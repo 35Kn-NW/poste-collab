@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "Filtrage de l'étude",
+  "version": "1.0.0",
+  "description": "Remplace les sites bloqués par l'étude par une page locale. Aucune connexion, aucun service extérieur.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "filtrage@poste-collab",
+      "strict_min_version": "128.0",
+      "data_collection_permissions": { "required": ["none"] }
+    }
+  },
+  "permissions": ["webRequest", "webRequestBlocking", "storage", "<all_urls>"],
+  "background": {
+    "scripts": ["regles.js", "fond.js"]
+  },
+  "web_accessible_resources": ["pages/*"],
+  "icons": {
+    "48": "icone.svg",
+    "96": "icone.svg"
+  }
+}

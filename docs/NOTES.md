@@ -447,7 +447,7 @@ Objectif : bloquer sur tous les postes les **sites pornographiques**, les **site
 ### Filtrage des sites d'extrême droite ✅ (décision assumée par l'étude)
 - **Décision de l'étude du 7 octobre 2026** : bloquer uniquement les sites de partis et mouvements d'extrême droite.
 - La **liste des domaines est définie et tenue par l'étude** dans `group_vars/all/reglages.yml` (variable `blocage_extreme_droite`). Le dépôt fournit le mécanisme, pas le classement politique.
-- Redirection vers une **page interne « Pays des câlins »** (`files/blockpages/calins.html`) : arcs-en-ciel, nuages et message bienveillant. Page originale, sans personnage ni marque protégés (« Bisounours » est une marque déposée).
+- Redirection vers une **page interne « Pays des câlins »** (`linux/extension-filtrage/pages/calins.html`) : arcs-en-ciel, nuages et message bienveillant. Page originale, sans personnage ni marque protégés (« Bisounours » est une marque déposée).
 - ⚠️ **Risques signalés et acceptés** : discrimination liée aux opinions politiques (Code du travail, art. L1132-1), obligation d'impartialité du notaire en tant qu'officier public, besoin professionnel éventuel de consulter ces sites (client). Recommandé : mentionner ce filtrage dans la **charte informatique** et prévoir une **exception** sur demande pour un besoin professionnel.
 
 ---

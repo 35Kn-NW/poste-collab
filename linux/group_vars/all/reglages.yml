@@ -158,6 +158,9 @@ domaines_ia_bloques:
   - huggingface.co
 
 # --- Filtrage web (rôle webfilter, cf. docs/NOTES.md §21) ---
+# Extension de redirection vers les pages locales (câlins, IA). Passe à true une fois signée
+# (linux/extension-filtrage/signer.sh) ; d'ici là, les sites restent bloqués avec la page standard.
+extension_filtrage_signee: false
 filtrage_actif: true
 # Listes de blocage par catégorie (format RPZ, mises à jour chaque jour).
 listes_blocage:

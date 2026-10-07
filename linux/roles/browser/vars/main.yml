@@ -28,10 +28,23 @@ zen_strategies:
     PasswordManagerEnabled: false
     OfferToSaveLogins: false
     ExtensionSettings: "{{ zen_extensions }}"
+    # Listes lues par l'extension de filtrage (aucune nouvelle signature quand elles changent).
+    3rdparty:
+      Extensions:
+        filtrage@poste-collab:
+          extreme_droite: "{{ blocage_extreme_droite }}"
+          ia: "{{ domaines_ia_bloques }}"
+          ia_maison_url: "{{ ia_connecteur_url }}"
 # Extensions validées installées d'office ; toute autre extension est bloquée.
-zen_extensions: "{{ extensions_zen | combine({'*': {'installation_mode': 'blocked', 'blocked_install_message': 'Seules les extensions validées par l’étude sont autorisées.'}}) }}"
+zen_extensions: "{{ extensions_zen | combine(zen_extension_filtrage) | combine({'*': {'installation_mode': 'blocked', 'blocked_install_message': 'Seules les extensions validées par l’étude sont autorisées.'}}) }}"
+zen_extension_filtrage: >-
+  {{ {'filtrage@poste-collab': {'installation_mode': 'force_installed',
+                                'install_url': 'file:///usr/share/poste-collab/extension/filtrage.xpi'}}
+     if extension_filtrage_signee else {} }}
+# Quand l'extension est active, elle affiche les pages locales : Zen ne bloque plus lui-même ces sites
+# (le filtrage DNS reste en place pour toutes les applications).
 zen_sites_bloques: >-
-  {{ blocage_onedrive_zen
+  {{ blocage_onedrive_zen if extension_filtrage_signee else blocage_onedrive_zen
      + (domaines_ia_bloques + blocage_extreme_droite) | map('regex_replace', '^(.*)$', '*://\\1/*') | list
      + (domaines_ia_bloques + blocage_extreme_droite) | map('regex_replace', '^(.*)$', '*://*.\\1/*') | list }}
 navigateur_types:

@@ -111,25 +111,10 @@
     <p class="fort">Le site que vous cherchiez n'est pas accessible depuis les postes de l'étude.</p>
     <p>Ici, on préfère la tolérance, le respect de chacun et les nuages tout doux.</p>
     <p>Prenez une grande inspiration, souriez, et retournez à vos actes&nbsp;: ils vous attendent avec bienveillance.</p>
-    <button type="button" onclick="history.length > 1 ? history.back() : window.close()">Revenir en arrière</button>
+    <button type="button" id="retour">Revenir en arrière</button>
     <small>Besoin professionnel de consulter ce site&nbsp;? Contactez l'administrateur de l'étude.</small>
   </main>
 
-  <script>
-    (function () {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      var symboles = ['♥', '♡', '✦'];
-      for (var i = 0; i < 14; i++) {
-        var c = document.createElement('span');
-        c.className = 'coeur';
-        c.setAttribute('aria-hidden', 'true');
-        c.textContent = symboles[i % symboles.length];
-        c.style.left = Math.round(Math.random() * 100) + 'vw';
-        c.style.animationDelay = (Math.random() * 9).toFixed(1) + 's';
-        c.style.fontSize = (16 + Math.round(Math.random() * 16)) + 'px';
-        document.body.appendChild(c);
-      }
-    })();
-  </script>
+  <script src="calins.js"></script>
 </body>
 </html>

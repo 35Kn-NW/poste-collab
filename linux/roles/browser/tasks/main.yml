@@ -14,6 +14,21 @@
     state: present
   when: not lc_conteneur
 
+- name: Installer les pages locales de blocage (câlins, IA)
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/extension-filtrage/pages/"
+    dest: /usr/share/poste-collab/pages/
+    mode: "0644"
+    directory_mode: "0755"
+
+- name: Installer l'extension de filtrage signée
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/files/extension/filtrage.xpi"
+    dest: /usr/share/poste-collab/extension/filtrage.xpi
+    mode: "0644"
+    directory_mode: "0755"
+  when: extension_filtrage_signee
+
 - name: Créer le dossier des stratégies de Zen
   ansible.builtin.file:
     path: "{{ zen_dossier_strategies }}"
