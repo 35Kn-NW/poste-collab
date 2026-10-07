@@ -19,8 +19,8 @@
 
 ## Lot 1 — Socle sans dépendance M365 ✅ (v0.1.0)
 - [x] `bootstrap.sh` : fenêtre d'installation (logo, barre générale, défilement), droits, Ansible, dépôt figé par version
-- [x] Plugin d'affichage `poste_notaire` + journaux dans `/var/log/linux-collab/`
-- [x] `site.yml`, `group_vars/all/reglages.yml`, `group_vars/all/theme.yml`, réglages locaux `/etc/linux-collab/local.yml`
+- [x] Plugin d'affichage `poste_notaire` + journaux dans `/var/log/poste-collab/`
+- [x] `site.yml`, `group_vars/all/reglages.yml`, `group_vars/all/theme.yml`, réglages locaux `/etc/poste-collab/local.yml`
 - [x] Rôle `base` : mises à jour téléchargées chaque jour et installées à l'extinction, aucun redémarrage automatique, ufw, AppArmor, fwupd
 - [x] Rôle `purge` : jeux, logiciels inutiles, clients OneDrive, logithèque, snap et snapd (bloqué)
 - [x] Rôle `branding` : dconf système verrouillé, Papirus-Light, Bibata, Inter/JetBrains Mono, accent bleu-vert, fond, dock latéral gauche fixe, logo GDM optionnel
@@ -60,15 +60,23 @@
 - [ ] Hors dépôt : MFA obligatoire sur le tenant M365
 - [ ] 🟡 Évaluer la connexion au poste avec le compte Entra ID (authd)
 
-## Lot 4 — IA (verrouillage)
-- [ ] Retrait de snapd et de la logithèque
-- [ ] polkit : installation Flatpak réservée aux administrateurs
-- [ ] Montage `noexec` de /home, /tmp, /var/tmp
-- [ ] Stratégies navigateurs : IA intégrées désactivées, liste blanche d'extensions
-- [ ] Blocage des domaines IA (navigateurs + /etc/hosts, DoH navigateur désactivé), exception pour l'IA maison
-- [ ] ONLYOFFICE : greffons désactivés
-- [ ] Rôle `ai` : PWA de l'IA maison (`ia_maison_url`, provisoire : https://ia.notaria.com) + raccourci global `Super+Espace`
+## Lot 4 — IA métier sur le poste (Linux, v0.2.0)
+- [x] Agent poste-ia : application GNOME unique par session (briefing, panneau, recherche, rappels)
+- [x] Briefing à l'ouverture : synthèse, vue d'ensemble, rendez-vous, à faire, points à vérifier, échéances ; tâches personnelles
+- [x] Sources : IA métier (connecteur), agenda et tâches Evolution, tâches personnelles ; une source en panne ne bloque jamais le briefing
+- [x] Moteur d'outils : périmètre, niveaux lire / agir / engager, confirmation, journal, arrêt d'urgence
+- [x] Connecteur poste/v1 (briefing, conversation en flux, outils, scellement) + serveur MCP local
+- [x] Recherche GNOME, menu « IA métier » au clic droit dans Fichiers, raccourci Super+Espace
+- [x] Tests automatisés (27) : périmètre, liens symboliques, confirmation, arrêt d'urgence, MCP, connecteur
+- [ ] Activer le connecteur quand le serveur de l'IA métier est prêt (ia_connecteur_url)
+- [ ] Rattachement du poste par clé REAL
+- [ ] Verrouillage restant : polkit Flatpak, noexec, blocage des domaines IA, greffons ONLYOFFICE
 - [ ] Hors dépôt : aucune licence Copilot, Copilot Chat désactivé dans le tenant M365
+
+## Multi-système
+- [x] Dépôt renommé poste-collab, script Linux dans linux/
+- [ ] Script macOS (macos/)
+- [ ] Script Windows 11 (windows/)
 
 ## Lot 4 bis — Filtrage web
 - [ ] Rôle `webfilter` : Unbound local + listes RPZ par catégorie (pornographie, jeux, menaces, IA), mise à jour quotidienne

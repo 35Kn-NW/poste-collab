@@ -1,5 +1,7 @@
 # Notes de cadrage et décisions
 
+_Décisions communes aux scripts Linux, macOS et Windows 11 ; les détails de mise en œuvre concernent d'abord Linux, premier système livré._
+
 _Dernière mise à jour : 7 octobre 2026_
 
 Chaque décision indique son **statut** : ✅ retenue · 🟡 à confirmer · ❌ écartée.
@@ -27,8 +29,8 @@ Chaque décision indique son **statut** : ✅ retenue · 🟡 à confirmer · �
 - **Idempotent** : relançable sans risque ; un seul outil pour l'installation initiale et la maintenance du parc.
 - **Modulaire** : un rôle Ansible par besoin, activable/désactivable via `group_vars/all/reglages.yml`.
 - `bootstrap.sh` reste minimal : fenêtre d'installation, droits administrateur, installation d'Ansible, récupération de ce dépôt (`git`, version figée par la release) puis `ansible-playbook` en local. Même principe qu'`ansible-pull`, avec un affichage maîtrisé de bout en bout.
-- **Affichage** : plugin Ansible `poste_notaire` (logo de vague, barre de progression générale fixe, défilement des étapes, journal dans `/var/log/linux-collab/`).
-- **Réglages propres à l'étude** hors dépôt : `/etc/linux-collab/local.yml`, chargé automatiquement.
+- **Affichage** : plugin Ansible `poste_notaire` (logo de vague, barre de progression générale fixe, défilement des étapes, journal dans `/var/log/poste-collab/`).
+- **Réglages propres à l'étude** hors dépôt : `/etc/poste-collab/local.yml`, chargé automatiquement.
 - Les valeurs sensibles ne sont jamais dans le dépôt (cf. README, section Confidentialité).
 
 ---
@@ -124,14 +126,14 @@ Il n'existe pas d'Office de bureau natif sous Linux. Combinaison retenue :
 
 ---
 
-## 10. IA : uniquement l'IA maison du logiciel de l'étude ✅
+## 10. IA : uniquement l'IA métier de l'étude, présente partout sur le poste ✅
 
-**Seule IA autorisée : l'IA propriétaire intégrée au logiciel de l'étude** (le nouveau LRA web). Aucune autre IA ne doit pouvoir être utilisée, ni installée, ni ouverte dans un navigateur (section 19).
+**Seule IA autorisée : l'IA métier propriétaire de l'étude, sur des serveurs distants.** Aucune autre IA ne doit pouvoir être utilisée, ni installée, ni ouverte dans un navigateur (section 19).
 
-- **Accès bureau** : PWA de l'IA maison déployée par l'administrateur, ouverte par un **raccourci global** (`Super+Espace`), icône dans le dock.
-- Son domaine est la **seule exception** autorisée dans les filtres IA (liste blanche dans `group_vars/all/reglages.yml`).
-- **Adresse provisoire : `https://ia.notaria.com`** (variable `ia_maison_url`). ⚠️ Avant tout déploiement, vérifier que le domaine `notaria.com` appartient bien à l'éditeur : il est déjà enregistré et actif, et une adresse tierce serait ouverte et autorisée sur tous les postes.
-- ❌ Écartés : Microsoft 365 Copilot (Chat compris), ChatGPT, Claude, Mistral (Le Chat), Gemini, Perplexity, DeepSeek, Duck.ai, Meta AI, modèles locaux et toute autre IA.
+- Sur le poste, un **agent** (poste-ia) rend l'IA présente partout : **briefing de la journée à l'ouverture de session** (synthèse, vue d'ensemble, rendez-vous, à faire, points à vérifier, échéances), panneau Super+Espace, recherche du système, clic droit sur les documents, rappels.
+- Il lui donne un accès **contrôlé** au poste : trois niveaux (lire, agir, engager), confirmation humaine pour tout ce qui engage l'étude, journal, arrêt d'urgence.
+- Le **connecteur** vers les serveurs de l'IA sera activé le moment venu ; son contrat est fixé dans [docs/IA-POSTE.md](IA-POSTE.md). Sans connecteur, le briefing fonctionne à partir de l'agenda et des tâches du poste.
+- Écartés ❌ : Microsoft 365 Copilot (Chat compris), ChatGPT, Claude, Mistral (Le Chat), Gemini, Perplexity, DeepSeek, Duck.ai, Meta AI, modèles locaux et toute autre IA.
 
 ---
 

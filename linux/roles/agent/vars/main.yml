@@ -1,0 +1,10 @@
+---
+agent_app_id: io.github.postecollab.PosteIA
+agent_config:
+  nom: "{{ ia_nom }}"
+  connecteur_url: "{{ ia_connecteur_url }}"
+  connecteur_ca: "{{ ia_connecteur_ca }}"
+  dossiers_autorises: "{{ ia_dossiers_autorises }}"
+  dossier_brouillons: "{{ ia_dossier_brouillons }}"
+  briefing_a_l_ouverture: "{{ ia_briefing_a_l_ouverture }}"
+  rappel_minutes: "{{ ia_rappel_minutes }}"

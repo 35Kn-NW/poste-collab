@@ -1,0 +1,65 @@
+---
+# Paramètres communs à tous les postes.
+# Les valeurs propres à l'étude ou sensibles vont dans /etc/poste-collab/local.yml (hors dépôt),
+# chargé automatiquement par bootstrap.sh.
+
+# --- Nettoyage (rôle purge, cf. docs/NOTES.md §5 et §19) ---
+paquets_a_retirer:
+  - aisleriot
+  - gnome-mahjongg
+  - gnome-mines
+  - gnome-sudoku
+  - rhythmbox
+  - cheese
+  - transmission-gtk
+  - transmission-common
+  - gnome-calculator      # remplacée par Qalculate!
+  - gnome-software        # aucune logithèque sur les postes
+  - onedrive              # OneDrive interdit
+  - insync
+retirer_snapd: true
+
+# --- Navigateurs (rôle browser, cf. docs/NOTES.md §6, §9 et §20) ---
+recherche_nom: DuckDuckGo France
+recherche_url: "https://noai.duckduckgo.com/?q={searchTerms}&kl=fr-fr&kad=fr_FR"
+recherche_suggestions_url: "https://duckduckgo.com/ac/?q={searchTerms}&type=list&kl=fr-fr"
+blocage_onedrive_zen:
+  - "*://onedrive.live.com/*"
+  - "*://*.onedrive.live.com/*"
+  - "*://onedrive.com/*"
+  - "*://*.onedrive.com/*"
+  - "*://1drv.ms/*"
+  - "*://*.sharepoint.com/personal/*"   # espaces OneDrive Entreprise
+
+# --- IA métier sur le poste (rôle agent, cf. docs/NOTES.md §10 et docs/IA-POSTE.md) ---
+ia_nom: IA métier
+# Adresse du serveur de l'IA métier (connecteur) : vide tant que le serveur n'est pas prêt.
+ia_connecteur_url: ""
+# Autorité du serveur si elle est privée : reconnue pour cette seule connexion, jamais installée comme racine.
+ia_connecteur_ca: ""
+# Périmètre de lecture de l'IA : dossier personnel, sans les éléments cachés (.ssh, .config…).
+ia_dossiers_autorises:
+  - "~"
+ia_dossier_brouillons: "~/Documents/Brouillons IA"
+ia_briefing_a_l_ouverture: true
+ia_rappel_minutes: 15
+
+# --- Raccourcis clavier (rôle tools) ---
+raccourcis_clavier:
+  - id: qalculate
+    nom: "Qalculate!"
+    commande: qalculate-gtk
+    touche: XF86Calculator
+  - id: poste-ia
+    nom: IA métier
+    commande: poste-ia panneau
+    touche: "<Super>space"
+
+# --- Filtrage web (rôle webfilter, cf. docs/NOTES.md §21) ---
+
+# Sites d'extrême droite : liste tenue par l'étude (décision du 7 octobre 2026).
+# Chaque domaine bloque aussi tous ses sous-domaines.
+# Redirection : files/blockpages/calins.html
+blocage_extreme_droite:
+  - rassemblementnational.fr   # Rassemblement national (site officiel)
+  - udr.fr                     # Union des droites pour la République (site officiel)

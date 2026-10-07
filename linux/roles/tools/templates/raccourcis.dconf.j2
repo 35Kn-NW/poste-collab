@@ -1,0 +1,17 @@
+# Géré par poste-collab (group_vars/all/reglages.yml, raccourcis_clavier).
+[org/gnome/settings-daemon/plugins/media-keys]
+calculator=@as []
+calculator-static=@as []
+custom-keybindings=[{% for r in raccourcis_clavier %}'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/{{ r.id }}/'{{ ', ' if not loop.last }}{% endfor %}]
+
+{% for r in raccourcis_clavier %}
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/{{ r.id }}]
+name='{{ r.nom }}'
+command='{{ r.commande }}'
+binding='{{ r.touche }}'
+
+{% endfor %}
+# Super+Espace est réservé à l'IA métier : le changement de clavier garde sa touche dédiée.
+[org/gnome/desktop/wm/keybindings]
+switch-input-source=['XF86Keyboard']
+switch-input-source-backward=['<Shift>XF86Keyboard']

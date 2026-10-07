@@ -1,93 +1,76 @@
-# linux-collab
+# poste-collab
 
-Déploiement automatisé d'un poste de travail Linux **professionnel** à partir d'une installation fraîche, pensé pour un environnement de bureau soumis au secret professionnel (offices notariaux) et contraint d'utiliser Microsoft 365.
+Scripts de déploiement d'un **poste de travail professionnel de collaborateur d'office notarial**, à partir d'une installation fraîche du système, pour **trois systèmes d'exploitation** :
 
-> **Statut : lot 1 disponible (v0.1.0)** : socle, nettoyage, apparence, Zen, Qalculate!. Les décisions sont consignées dans [`docs/NOTES.md`](docs/NOTES.md), le plan de travail dans [`docs/ROADMAP.md`](docs/ROADMAP.md).
+| Système | Dossier | État |
+|---|---|---|
+| **Linux** (Ubuntu 26.04 LTS, GNOME 50) | [`linux/`](linux/) | ✅ Lot 1 disponible, IA métier en cours (v0.2.0) |
+| **macOS** | `macos/` | 🔜 À venir |
+| **Windows 11** | `windows/` | 🔜 À venir |
 
-## Objectifs
+Les trois scripts partagent les **mêmes décisions** (sécurité, Microsoft 365, IA métier, filtrage, apparence), consignées dans [`docs/NOTES.md`](docs/NOTES.md), et le même plan de travail : [`docs/ROADMAP.md`](docs/ROADMAP.md). Chaque système les applique avec ses outils natifs.
 
-Un nouveau poste doit être opérationnel avec **une seule commande** après l'installation de l'OS, et le même outil doit permettre de maintenir le parc dans le temps.
+## Objectifs communs
 
-Le déploiement couvre :
+Un nouveau poste doit être opérationnel avec **une seule commande** après l'installation du système, et le même outil doit permettre de maintenir le parc dans le temps.
 
-- **Messagerie** : Evolution connecté à Microsoft 365 (API Graph)
-- **Antivirus** : ESET Endpoint Antivirus for Linux (protection temps réel, éditeur externe)
-- **Nettoyage** : suppression des jeux et logiciels inutiles
-- **Navigateur** : Zen Browser
-- **Identité visuelle** : fond d'écran maison, appliqué à tous les utilisateurs
-- **Chat sécurisé** : messagerie chiffrée de bout en bout
-- **Microsoft 365** : intégration maximale (SSO, conformité, applications web, édition hors ligne) — **OneDrive interdit et bloqué**
-- **Visioconférence** : Microsoft Teams et Lifesize intégrés au bureau
-- **Calculatrice** : Qalculate!, avec historique des résultats conservé
-- **IA** : uniquement l'IA maison du logiciel de l'étude, accessible depuis le bureau ; toute autre IA bloquée
-- **WhatsApp** : WhatsApp Web installé par défaut (PWA)
-- **Sécurité** : durcissement maximal (chiffrement, USBGuard, CIS, Bitwarden auto-hébergé)
-- **Énergie** : extinction automatique le soir, avec possibilité de report
+- **IA métier** de l'étude présente partout sur le poste : briefing de la journée à l'ouverture de session, panneau (Super+Espace), recherche, clic droit sur les documents ; aucune autre IA possible ([`docs/IA-POSTE.md`](docs/IA-POSTE.md))
+- **Microsoft 365** : intégration maximale, **OneDrive interdit**
+- **Messagerie** : Evolution (Linux) connectée à Microsoft 365
+- **Antivirus** : ESET
+- **Navigateur** : Zen, moteur DuckDuckGo France sans IA
+- **Visioconférence** : Teams et Lifesize · **WhatsApp** : WhatsApp Web
+- **Sécurité** : durcissement maximal, Bitwarden auto-hébergé, filtrage web
+- **Énergie** : extinction automatique le soir, mises à jour installées à l'extinction, jamais de redémarrage automatique
+- **Apparence** : style clair, accent bleu-vert, fond d'écran de l'étude
 
-## Socle retenu
+## Installer un poste Linux
 
-| Élément | Choix |
-|---|---|
-| Distribution | **Ubuntu 26.04 LTS** — plan B : Debian 13 |
-| Bureau | **GNOME 50** (Wayland), style clair, accent bleu-vert, icônes Papirus, inspiré d'Archcraft sans hack GTK (cf. notes §15) |
-| Orchestration | `bootstrap.sh` → `git` + **`ansible-playbook`** : le poste récupère ce dépôt et s'applique la configuration |
-| Chiffrement disque | **LUKS** activé à l'installation (obligatoire) |
+Prérequis : Ubuntu 26.04 fraîchement installé (disque chiffré), et les deux fichiers fournis par l'administrateur, placés dans le même dossier :
 
-## Installer un poste
+- `installer-linux.sh` : le script d'installation, figé sur une version publiée ;
+- `cle-depot` : la **clé de lecture** du dépôt (le dépôt est privé ; la clé ne permet que la lecture).
 
-Sur un poste **Ubuntu 26.04** fraîchement installé (disque chiffré), depuis la session d'un utilisateur administrateur :
+Puis, depuis la session d'un utilisateur administrateur :
 
 ```bash
-wget -O bootstrap.sh https://github.com/35Kn-NW/Linux-collab/releases/latest/download/bootstrap.sh
-```
-
-```bash
-bash bootstrap.sh
+bash installer-linux.sh
 ```
 
 Le script ouvre sa propre fenêtre de terminal (logo, barre de progression générale, défilement des étapes), demande le mot de passe administrateur puis installe le poste. Il peut être **relancé sans risque** : seules les différences sont appliquées.
 
-- Journaux : `/var/log/linux-collab/`
-- Réglages propres à l'étude, **hors dépôt** : `/etc/linux-collab/local.yml`, par exemple :
+- Journaux : `/var/log/poste-collab/`
+- Réglages propres à l'étude, **hors dépôt** : `/etc/poste-collab/local.yml`, par exemple :
 
 ```yaml
-fond_ecran_fichier: /etc/linux-collab/fond-etude.webp
-logo_ecran_connexion: /etc/linux-collab/logo.png
+fond_ecran_fichier: /etc/poste-collab/fond-etude.webp
+logo_ecran_connexion: /etc/poste-collab/logo.png
+ia_connecteur_url: https://ia.exemple.fr
 ```
 
-- Sans interface graphique (SSH) : `LC_SANS_FENETRE=1 bash bootstrap.sh`
+- Sans interface graphique (SSH) : `LC_SANS_FENETRE=1 bash installer-linux.sh`
 
 ## Structure
 
 ```
-linux-collab/
-├── bootstrap.sh          # fenêtre d'installation, Ansible, récupération du dépôt
-├── ansible.cfg           # affichage poste_notaire, journal
-├── callback_plugins/     # affichage : logo, barre de progression, défilement des étapes
-├── site.yml              # playbook principal
-├── group_vars/all/
-│   ├── reglages.yml      # paquets à purger, moteur de recherche, domaines bloqués…
-│   └── theme.yml         # style visuel : accent, icônes, curseur, polices, fond, dock
-├── roles/
-│   ├── base/             # mises à jour auto, ufw, fwupd, AppArmor, sauvegarde NAS
-│   ├── purge/            # jeux, logiciels inutiles, clients OneDrive
-│   ├── hardening/        # USBGuard, PAM, sysctl, DNS chiffré, USG/CIS, auditd
-│   ├── antivirus/        # ESET Endpoint Antivirus for Linux
-│   ├── browser/          # Zen (Flatpak) + Edge (M365), blocage OneDrive
-│   ├── m365/             # Intune, broker Entra ID, PWA, ONLYOFFICE, polices
-│   ├── mail/             # Evolution + evolution-ews (compte Microsoft 365)
-│   ├── visio/            # Teams + Lifesize (PWA), routage des liens de réunion
-│   ├── tools/            # Qalculate! et utilitaires de bureau
-│   ├── passwords/        # Bitwarden (Flatpak + extensions) préconfiguré sur le serveur de l'étude
-│   ├── webfilter/        # Unbound + listes par catégorie, extension de redirection
-│   ├── power/            # extinction automatique du soir avec fenêtre de report
-│   ├── chat/             # messagerie sécurisée
-│   ├── ai/               # PWA de l'IA maison + blocage de toute autre IA
-│   └── branding/         # applique theme.yml : dconf système, icônes, curseur, polices, GDM
-└── files/
-    └── wallpaper.png
+poste-collab/
+├── docs/                     # décisions communes, roadmap, architecture de l'IA métier
+├── linux/
+│   ├── bootstrap.sh          # publié comme « installer-linux.sh » dans chaque release
+│   ├── ansible.cfg, site.yml, inventaire.ini
+│   ├── callback_plugins/     # affichage : logo, barre de progression, défilement des étapes
+│   ├── group_vars/all/       # reglages.yml, theme.yml
+│   ├── roles/                # base, purge, branding, browser, tools, agent…
+│   ├── agent/                # agent IA métier du poste (briefing, panneau, outils, connecteur)
+│   └── files/                # logo, icône, fond provisoire
+├── macos/                    # à venir
+└── windows/                  # à venir
 ```
+
+## Versions
+
+Chaque release publie le script d'installation de chaque système disponible (`installer-linux.sh`, puis `installer-macos.sh`, `installer-windows.ps1`), **figé sur la version du dépôt correspondante**.
 
 ## Confidentialité
 
-Ce dépôt est **public** : il ne doit contenir **aucun secret** (identifiants de tenant, clé de licence ESET, jetons d'inscription, noms de clients). Ces valeurs seront fournies localement au moment du déploiement (fichier de variables hors dépôt ou Ansible Vault).
+Le dépôt est **privé**. Il ne contient néanmoins **aucun secret** (identifiants de tenant, clé de licence ESET, jetons, noms de clients) : ces valeurs sont fournies sur chaque poste, hors dépôt (`/etc/poste-collab/local.yml`, trousseau du système).

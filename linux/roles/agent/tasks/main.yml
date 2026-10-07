@@ -1,0 +1,99 @@
+---
+- name: Installer les bibliothèques de l'agent
+  ansible.builtin.apt:
+    name:
+      - python3-gi
+      - gir1.2-gtk-4.0
+      - gir1.2-adw-1
+      - gir1.2-edataserver-1.2
+      - gir1.2-ecal-2.0
+      - gir1.2-ical-3.0
+      - gir1.2-secret-1
+      - python3-nautilus
+      - gir1.2-nautilus-4.1
+      - poppler-utils
+      - zenity
+      - libnotify-bin
+      - xdg-utils
+      - gtk-update-icon-cache
+    state: present
+    lock_timeout: 600
+
+- name: Installer l'agent
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/agent/poste_ia"
+    dest: /usr/lib/poste-ia/
+    mode: "0644"
+    directory_mode: "0755"
+
+- name: Installer la commande poste-ia
+  ansible.builtin.copy:
+    dest: /usr/bin/poste-ia
+    content: |
+      #!/bin/sh
+      # Géré par poste-collab : agent IA métier du poste.
+      exec env PYTHONPATH=/usr/lib/poste-ia python3 -m poste_ia "$@"
+    mode: "0755"
+
+- name: Créer le dossier de configuration du poste
+  ansible.builtin.file:
+    path: /etc/poste-collab
+    state: directory
+    mode: "0755"
+
+- name: Configurer l'agent
+  ansible.builtin.copy:
+    dest: /etc/poste-collab/poste-ia.json
+    content: "{{ agent_config | to_nice_json(indent=2) }}"
+    mode: "0644"
+
+- name: Installer l'icône
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/files/ui/poste-ia.svg"
+    dest: "/usr/share/icons/hicolor/scalable/apps/{{ agent_app_id }}.svg"
+    mode: "0644"
+  notify: Mettre à jour le cache des icônes
+
+- name: Déclarer l'application
+  ansible.builtin.template:
+    src: application.desktop.j2
+    dest: "/usr/share/applications/{{ agent_app_id }}.desktop"
+    mode: "0644"
+
+- name: Lancer le briefing à l'ouverture de session
+  ansible.builtin.template:
+    src: demarrage.desktop.j2
+    dest: "/etc/xdg/autostart/{{ agent_app_id }}.Demarrage.desktop"
+    mode: "0644"
+
+- name: Permettre le démarrage à la demande (D-Bus)
+  ansible.builtin.copy:
+    dest: "/usr/share/dbus-1/services/{{ agent_app_id }}.service"
+    content: |
+      [D-BUS Service]
+      Name={{ agent_app_id }}
+      Exec=/usr/bin/poste-ia --gapplication-service
+    mode: "0644"
+
+- name: Brancher l'IA métier sur la recherche GNOME
+  ansible.builtin.copy:
+    dest: "/usr/share/gnome-shell/search-providers/{{ agent_app_id }}.search-provider.ini"
+    content: |
+      [Shell Search Provider]
+      DesktopId={{ agent_app_id }}.desktop
+      BusName={{ agent_app_id }}
+      ObjectPath=/io/github/postecollab/PosteIA/SearchProvider
+      Version=2
+    mode: "0644"
+
+- name: Créer le dossier des extensions de Fichiers
+  ansible.builtin.file:
+    path: /usr/share/nautilus-python/extensions
+    state: directory
+    mode: "0755"
+
+- name: Ajouter le menu « IA métier » au clic droit dans Fichiers
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/agent/nautilus/poste_ia_nautilus.py"
+    dest: /usr/share/nautilus-python/extensions/poste_ia_nautilus.py
+    mode: "0644"

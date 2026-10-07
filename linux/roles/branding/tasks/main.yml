@@ -1,0 +1,81 @@
+---
+- name: Installer icônes, curseur et polices
+  ansible.builtin.apt:
+    name:
+      - papirus-icon-theme
+      - bibata-cursor-theme
+      - fonts-inter
+      - fonts-jetbrains-mono
+      - webp-pixbuf-loader
+    state: present
+    lock_timeout: 600
+
+- name: Créer le dossier du fond d'écran
+  ansible.builtin.file:
+    path: /usr/share/backgrounds/poste-collab
+    state: directory
+    mode: "0755"
+
+- name: Installer le fond d'écran
+  ansible.builtin.copy:
+    src: "{{ lc_fond_source }}"
+    dest: "{{ lc_fond }}"
+    mode: "0644"
+  notify: Mettre à jour dconf
+
+- name: Déclarer la base de réglages des utilisateurs
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/profile/user
+    line: user-db:user
+    insertbefore: BOF
+    create: true
+    mode: "0644"
+  notify: Mettre à jour dconf
+
+- name: Déclarer la base de réglages du poste
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/profile/user
+    line: system-db:local
+    insertafter: EOF
+  notify: Mettre à jour dconf
+
+- name: Créer les dossiers de réglages du poste
+  ansible.builtin.file:
+    path: /etc/dconf/db/local.d/locks
+    state: directory
+    mode: "0755"
+
+- name: Appliquer le style visuel
+  ansible.builtin.template:
+    src: theme.dconf.j2
+    dest: /etc/dconf/db/local.d/00-poste-collab-theme
+    mode: "0644"
+  notify: Mettre à jour dconf
+
+- name: Verrouiller le fond d'écran et le verrouillage de session
+  ansible.builtin.copy:
+    src: verrous
+    dest: /etc/dconf/db/local.d/locks/00-poste-collab-theme
+    mode: "0644"
+  notify: Mettre à jour dconf
+
+- name: Installer le logo de l'écran de connexion
+  ansible.builtin.copy:
+    src: "{{ logo_ecran_connexion }}"
+    dest: "/usr/share/pixmaps/poste-collab-logo{{ logo_ecran_connexion | splitext | last }}"
+    mode: "0644"
+  when: logo_ecran_connexion | length > 0
+
+- name: Afficher le logo sur l'écran de connexion
+  ansible.builtin.copy:
+    dest: /etc/dconf/db/gdm.d/01-poste-collab
+    content: |
+      # Géré par poste-collab.
+      [org/gnome/login-screen]
+      logo='/usr/share/pixmaps/poste-collab-logo{{ logo_ecran_connexion | splitext | last }}'
+
+      [org/gnome/desktop/interface]
+      accent-color='{{ theme.accent }}'
+    mode: "0644"
+  when: logo_ecran_connexion | length > 0
+  notify: Mettre à jour dconf

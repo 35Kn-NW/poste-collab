@@ -1,0 +1,19 @@
+---
+- name: Installer Qalculate!
+  ansible.builtin.apt:
+    name: qalculate-gtk
+    state: present
+    lock_timeout: 600
+
+- name: Retirer l'ancien fichier de raccourcis
+  ansible.builtin.file:
+    path: /etc/dconf/db/local.d/10-poste-collab-outils
+    state: absent
+  notify: Mettre à jour dconf
+
+- name: Raccourcis clavier (Calculatrice, Super+Espace…)
+  ansible.builtin.template:
+    src: raccourcis.dconf.j2
+    dest: /etc/dconf/db/local.d/10-poste-collab-raccourcis
+    mode: "0644"
+  notify: Mettre à jour dconf

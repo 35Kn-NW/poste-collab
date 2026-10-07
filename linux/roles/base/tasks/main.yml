@@ -1,0 +1,78 @@
+---
+- name: Mettre à jour la liste des logiciels
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+    lock_timeout: 600
+
+- name: Installer les outils du socle
+  ansible.builtin.apt:
+    name:
+      - unattended-upgrades
+      - ufw
+      - fwupd
+      - apparmor
+      - apparmor-utils
+      - flatpak
+      - dconf-cli
+    state: present
+    lock_timeout: 600
+
+- name: Télécharger les mises à jour chaque jour, sans les installer en journée
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      // Géré par poste-collab : téléchargement quotidien, installation à l'extinction.
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Download-Upgradeable-Packages "1";
+      APT::Periodic::Unattended-Upgrade "0";
+      APT::Periodic::AutocleanInterval "7";
+    mode: "0644"
+
+- name: Installer les mises à jour à l'extinction, sans redémarrage automatique
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/52poste-collab-mises-a-jour
+    content: |
+      // Géré par poste-collab (cf. docs/NOTES.md §16 et §18).
+      Unattended-Upgrade::InstallOnShutdown "true";
+      Unattended-Upgrade::Automatic-Reboot "false";
+      Unattended-Upgrade::Remove-Unused-Dependencies "true";
+    mode: "0644"
+
+- name: Activer l'installation des mises à jour à l'extinction
+  ansible.builtin.systemd_service:
+    name: unattended-upgrades
+    enabled: true
+    state: started
+  when: not lc_conteneur
+
+- name: Pare-feu · refuser tout trafic entrant
+  community.general.ufw:
+    default: deny
+    direction: incoming
+  when: not lc_conteneur
+
+- name: Pare-feu · autoriser le trafic sortant
+  community.general.ufw:
+    default: allow
+    direction: outgoing
+  when: not lc_conteneur
+
+- name: Pare-feu · activer
+  community.general.ufw:
+    state: enabled
+  when: not lc_conteneur
+
+- name: Activer AppArmor
+  ansible.builtin.systemd_service:
+    name: apparmor
+    enabled: true
+    state: started
+  when: not lc_conteneur
+
+- name: Activer la vérification des micrologiciels
+  ansible.builtin.systemd_service:
+    name: fwupd-refresh.timer
+    enabled: true
+    state: started
+  when: not lc_conteneur
