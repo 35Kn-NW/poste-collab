@@ -39,6 +39,12 @@
     insertafter: EOF
   notify: Mettre à jour dconf
 
+- name: Créer les dossiers de réglages du poste
+  ansible.builtin.file:
+    path: /etc/dconf/db/local.d/locks
+    state: directory
+    mode: "0755"
+
 - name: Appliquer le style visuel
   ansible.builtin.template:
     src: theme.dconf.j2
