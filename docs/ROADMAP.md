@@ -2,7 +2,7 @@
 
 ## Lot 0 — Cadrage
 - [x] Choix de la distribution (Ubuntu 26.04 LTS)
-- [x] Choix de l'orchestration (bootstrap + ansible-pull)
+- [x] Choix de l'orchestration (bootstrap + Ansible en mode pull)
 - [x] Notes de décision ([NOTES.md](NOTES.md))
 - [x] Antivirus : ESET Endpoint Antivirus for Linux
 - [x] OneDrive : interdit sur les postes
@@ -17,15 +17,19 @@
 - [x] Filtrage web : pornographie, jeux d'argent, sites dangereux
 - [ ] Réponses aux questions ouvertes (licence M365, nombre de postes, chat, domaine de l'IA maison)
 
-## Lot 1 — Socle sans dépendance M365
-- [ ] `bootstrap.sh` + `site.yml` + `group_vars/all.yml`
-- [ ] Rôle `base` (unattended-upgrades, ufw, fwupd, sauvegarde vers NAS)
-- [ ] Rôle `purge` (dont clients OneDrive `onedrive` / `insync`)
-- [ ] `group_vars/theme.yml` (style visuel unique)
-- [ ] Rôle `branding` : dconf système, icônes, curseur Bibata, polices Inter/JetBrains Mono, fond clair, icônes Papirus, palette Ptyxis claire, GDM, dock latéral gauche fixe
-- [ ] Rôle `browser` : Zen Flatpak + stratégie de blocage OneDrive + DuckDuckGo France sans IA par défaut
-- [ ] 🟡 Valider l'emplacement des stratégies pour Zen en Flatpak
-- [ ] Rôle `tools` : Qalculate! (remplace la calculatrice GNOME, touche Calculatrice)
+## Lot 1 — Socle sans dépendance M365 ✅ (v0.1.0)
+- [x] `bootstrap.sh` : fenêtre d'installation (logo, barre générale, défilement), droits, Ansible, dépôt figé par version
+- [x] Plugin d'affichage `poste_notaire` + journaux dans `/var/log/linux-collab/`
+- [x] `site.yml`, `group_vars/all/reglages.yml`, `group_vars/all/theme.yml`, réglages locaux `/etc/linux-collab/local.yml`
+- [x] Rôle `base` : mises à jour téléchargées chaque jour et installées à l'extinction, aucun redémarrage automatique, ufw, AppArmor, fwupd
+- [x] Rôle `purge` : jeux, logiciels inutiles, clients OneDrive, logithèque, snap et snapd (bloqué)
+- [x] Rôle `branding` : dconf système verrouillé, Papirus-Light, Bibata, Inter/JetBrains Mono, accent bleu-vert, fond, dock latéral gauche fixe, logo GDM optionnel
+- [x] Rôle `browser` : Zen Flatpak, stratégies (DuckDuckGo France sans IA, OneDrive bloqué, IA et DNS over HTTPS désactivés), navigateur par défaut
+- [x] Rôle `tools` : Qalculate! + touche Calculatrice
+- [x] Test en conteneur Ubuntu 26.04 : installation complète réussie, second passage sans aucune modification
+- [ ] 🟡 Test sur poste pilote / VM avec bureau : fenêtre Ptyxis, pare-feu, Zen et ses stratégies (`about:policies`), apparence après reconnexion
+- [ ] Palette claire du terminal Ptyxis
+- [ ] Sauvegarde chiffrée vers le NAS (lot 3 bis)
 
 ## Lot 2 — Microsoft 365
 - [ ] Rôle `browser` : Edge + `URLBlocklist` OneDrive + DuckDuckGo France sans IA par défaut

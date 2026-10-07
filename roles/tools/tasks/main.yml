@@ -1,0 +1,13 @@
+---
+- name: Installer Qalculate!
+  ansible.builtin.apt:
+    name: qalculate-gtk
+    state: present
+    lock_timeout: 600
+
+- name: Ouvrir Qalculate! avec la touche Calculatrice
+  ansible.builtin.copy:
+    src: outils.dconf
+    dest: /etc/dconf/db/local.d/10-linux-collab-outils
+    mode: "0644"
+  notify: Mettre à jour dconf

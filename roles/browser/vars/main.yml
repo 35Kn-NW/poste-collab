@@ -1,0 +1,29 @@
+---
+zen_dossier_strategies: "/var/lib/flatpak/extension/app.zen_browser.zen.systemconfig/{{ ansible_architecture }}/stable/policies"
+zen_strategies:
+  policies:
+    DisableAppUpdate: true
+    DisableTelemetry: true
+    DisableFirefoxStudies: true
+    DNSOverHTTPS:
+      Enabled: false
+      Locked: true
+    GenerativeAI:
+      Enabled: false
+      Locked: true
+    SearchEngines:
+      Add:
+        - Name: "{{ recherche_nom }}"
+          URLTemplate: "{{ recherche_url }}"
+          SuggestURLTemplate: "{{ recherche_suggestions_url }}"
+          Method: GET
+          IconURL: https://duckduckgo.com/favicon.ico
+          Alias: "@ddg"
+      Default: "{{ recherche_nom }}"
+    WebsiteFilter:
+      Block: "{{ blocage_onedrive_zen }}"
+navigateur_types:
+  - text/html
+  - application/xhtml+xml
+  - x-scheme-handler/http
+  - x-scheme-handler/https

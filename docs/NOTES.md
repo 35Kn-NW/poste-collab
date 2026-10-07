@@ -22,11 +22,13 @@ Chaque décision indique son **statut** : ✅ retenue · 🟡 à confirmer · �
 
 ---
 
-## 2. Orchestration : bootstrap bash + `ansible-pull` ✅
+## 2. Orchestration : bootstrap bash + Ansible en mode « pull » ✅
 
 - **Idempotent** : relançable sans risque ; un seul outil pour l'installation initiale et la maintenance du parc.
-- **Modulaire** : un rôle Ansible par besoin, activable/désactivable via `group_vars/all.yml`.
-- `bootstrap.sh` reste minimal : prérequis, installation d'Ansible, `ansible-pull` sur ce dépôt.
+- **Modulaire** : un rôle Ansible par besoin, activable/désactivable via `group_vars/all/reglages.yml`.
+- `bootstrap.sh` reste minimal : fenêtre d'installation, droits administrateur, installation d'Ansible, récupération de ce dépôt (`git`, version figée par la release) puis `ansible-playbook` en local. Même principe qu'`ansible-pull`, avec un affichage maîtrisé de bout en bout.
+- **Affichage** : plugin Ansible `poste_notaire` (logo de vague, barre de progression générale fixe, défilement des étapes, journal dans `/var/log/linux-collab/`).
+- **Réglages propres à l'étude** hors dépôt : `/etc/linux-collab/local.yml`, chargé automatiquement.
 - Les valeurs sensibles ne sont jamais dans le dépôt (cf. README, section Confidentialité).
 
 ---
@@ -56,7 +58,7 @@ Options écartées :
 
 ## 5. Nettoyage des paquets ✅
 
-- `apt purge` d'une liste déclarée dans `group_vars/all.yml` : jeux GNOME (`aisleriot`, `gnome-mines`, `gnome-sudoku`, `gnome-mahjongg`…), `rhythmbox`, `cheese`, `transmission-*`, `gnome-calculator` (remplacée par Qalculate!, cf. section 13), etc.
+- `apt purge` d'une liste déclarée dans `group_vars/all/reglages.yml` : jeux GNOME (`aisleriot`, `gnome-mines`, `gnome-sudoku`, `gnome-mahjongg`…), `rhythmbox`, `cheese`, `transmission-*`, `gnome-calculator` (remplacée par Qalculate!, cf. section 13), etc.
 - `apt autoremove --purge` ensuite.
 - Firefox (snap) retiré si Zen est le navigateur par défaut.
 - **snapd** retiré complètement, ainsi que la logithèque (section 19).
@@ -127,7 +129,7 @@ Il n'existe pas d'Office de bureau natif sous Linux. Combinaison retenue :
 **Seule IA autorisée : l'IA propriétaire intégrée au logiciel de l'étude** (le nouveau LRA web). Aucune autre IA ne doit pouvoir être utilisée, ni installée, ni ouverte dans un navigateur (section 19).
 
 - **Accès bureau** : PWA de l'IA maison déployée par l'administrateur, ouverte par un **raccourci global** (`Super+Espace`), icône dans le dock.
-- Son domaine est la **seule exception** autorisée dans les filtres IA (liste blanche dans `group_vars/all.yml`).
+- Son domaine est la **seule exception** autorisée dans les filtres IA (liste blanche dans `group_vars/all/reglages.yml`).
 - **Adresse provisoire : `https://ia.notaria.com`** (variable `ia_maison_url`). ⚠️ Avant tout déploiement, vérifier que le domaine `notaria.com` appartient bien à l'éditeur : il est déjà enregistré et actif, et une adresse tierce serait ouverte et autorisée sur tous les postes.
 - ❌ Écartés : Microsoft 365 Copilot (Chat compris), ChatGPT, Claude, Mistral (Le Chat), Gemini, Perplexity, DeepSeek, Duck.ai, Meta AI, modèles locaux et toute autre IA.
 
@@ -234,9 +236,9 @@ Les applications GNOME modernes (libadwaita / GTK 4) **ne supportent pas les th�
 ### Mécanique reprise d'Archcraft : le « style » comme source unique
 Archcraft change d'un coup tout un « style » (fond d'écran, icônes, curseur, couleurs du terminal) à partir d'un seul fichier. On reprend cette idée proprement :
 
-- Un fichier **`group_vars/theme.yml`** décrit le style : couleur d'accent, style clair, icônes, curseur, polices, fonds d'écran, palette du terminal.
+- Un fichier **`group_vars/all/theme.yml`** décrit le style : couleur d'accent, style clair, icônes, curseur, polices, fonds d'écran, palette du terminal.
 - Le rôle `branding` le traduit en **valeurs par défaut dconf système** (`/etc/dconf/db/local.d/`), éventuellement verrouillées.
-- Changer de style = modifier ce fichier et relancer `ansible-pull` sur le parc.
+- Changer de style = modifier ce fichier et relancer `bootstrap.sh` sur le parc.
 - **Retour arrière** immédiat : supprimer le fichier dconf système et lancer `dconf update` ramène le bureau Ubuntu d'origine.
 
 ### Garde-fous
@@ -350,7 +352,7 @@ Objectif : **économiser l'énergie** et ne pas laisser de poste allumé (et dé
 - Minuteur et service **systemd** système (`etude-extinction.timer`) : aucune extension GNOME, donc insensible aux mises à jour du bureau.
 - Fenêtre affichée dans la session de l'utilisateur par un service systemd utilisateur, avec **zenity** (fourni par Ubuntu).
 - Règle **polkit** autorisant l'extinction forcée par ce seul service.
-- Paramètres dans `group_vars/all.yml` : heure, durée du compte à rebours (60 s), durée du report (30 min), reports illimités.
+- Paramètres dans `group_vars/all/reglages.yml` : heure, durée du compte à rebours (60 s), durée du report (30 min), reports illimités.
 - ✅ **Mises à jour installées à l'extinction** (`Unattended-Upgrade::InstallOnShutdown "true"`), qu'elle soit automatique ou manuelle : le poste est à jour au prochain allumage, sans jamais redémarrer en journée.
 - ❌ **Aucun rallumage ni redémarrage automatique** : un poste éteint reste éteint (week-ends, vacances).
 
@@ -377,7 +379,7 @@ Une liste noire d'applications ne suffit pas (de nouvelles apparaissent chaque m
 | Greffons IA d'ONLYOFFICE | Gestionnaire de greffons désactivé, greffon IA retiré |
 
 ### Contrôle
-- La liste des domaines et des extensions autorisées est dans `group_vars/all.yml`, mise à jour sans toucher au code.
+- La liste des domaines et des extensions autorisées est dans `group_vars/all/reglages.yml`, mise à jour sans toucher au code.
 - L'audit de fin de déploiement (lot 5) vérifie qu'aucun binaire, Flatpak, snap ou extension non autorisé n'est présent.
 
 ⚠️ Limites techniques :
@@ -401,7 +403,7 @@ Une **charte d'usage de l'IA** signée par chaque collaborateur complète donc c
 - Par défaut **modifiable** par l'utilisateur (stratégies « recommandées » côté Edge). 🟡 Peut être verrouillé si l'étude le souhaite.
 - `duck.ai` est ajouté à la liste des domaines IA bloqués (section 19).
 
-⚠️ **Point technique à valider pour toutes les stratégies de Zen** (moteur de recherche, blocage OneDrive, extensions, IA) : Zen est installé en Flatpak, qui ne lit pas forcément le fichier `policies.json` du système. L'emplacement exact pris en compte par le Flatpak de Zen doit être vérifié sur le poste pilote ; à défaut, Zen sera installé depuis son paquet officiel hors Flatpak.
+⚠️ **Point technique à valider pour toutes les stratégies de Zen** (moteur de recherche, blocage OneDrive, extensions, IA) : Zen est installé en Flatpak, qui ne lit pas forcément le fichier `policies.json` du système. Emplacement retenu : l'extension `app.zen_browser.zen.systemconfig` prévue par le Flatpak de Zen (`/var/lib/flatpak/extension/app.zen_browser.zen.systemconfig/<arch>/stable/policies/policies.json`). 🟡 Sa prise en compte reste à vérifier sur le poste pilote (`about:policies`) ; à défaut, Zen sera installé depuis son paquet officiel hors Flatpak.
 
 ---
 
@@ -424,14 +426,14 @@ Objectif : bloquer sur tous les postes les **sites pornographiques**, les **site
 | Pornographie, jeux d'argent | Page interne neutre : « Ce site n'est pas accessible depuis les postes de l'étude. » |
 
 ### Contrôle
-- Catégories, listes, exceptions et pages de redirection paramétrées dans `group_vars/all.yml`.
+- Catégories, listes, exceptions et pages de redirection paramétrées dans `group_vars/all/reglages.yml`.
 - Un site bloqué par erreur est débloqué par l'administrateur via une **liste d'exceptions**.
 - 🟡 Pas de journal nominatif des sites consultés sur le poste (proportionnalité, RGPD) ; seuls les compteurs de blocage sont conservés.
 - ⚠️ À mentionner dans la **charte informatique** de l'étude : les salariés doivent être informés du filtrage.
 
 ### Filtrage des sites d'extrême droite ✅ (décision assumée par l'étude)
 - **Décision de l'étude du 7 octobre 2026** : bloquer uniquement les sites de partis et mouvements d'extrême droite.
-- La **liste des domaines est définie et tenue par l'étude** dans `group_vars/all.yml` (variable `blocage_extreme_droite`). Le dépôt fournit le mécanisme, pas le classement politique.
+- La **liste des domaines est définie et tenue par l'étude** dans `group_vars/all/reglages.yml` (variable `blocage_extreme_droite`). Le dépôt fournit le mécanisme, pas le classement politique.
 - Redirection vers une **page interne « Pays des câlins »** (`files/blockpages/calins.html`) : arcs-en-ciel, nuages et message bienveillant. Page originale, sans personnage ni marque protégés (« Bisounours » est une marque déposée).
 - ⚠️ **Risques signalés et acceptés** : discrimination liée aux opinions politiques (Code du travail, art. L1132-1), obligation d'impartialité du notaire en tant qu'officier public, besoin professionnel éventuel de consulter ces sites (client). Recommandé : mentionner ce filtrage dans la **charte informatique** et prévoir une **exception** sur demande pour un besoin professionnel.
 
@@ -444,6 +446,6 @@ Objectif : bloquer sur tous les postes les **sites pornographiques**, les **site
 3. **Chat sécurisé** : usage interne seulement, ou aussi avec clients et confrères ?
 4. ✅ **snapd** : retiré (section 19).
 5. **IA maison** : adresse provisoire `ia.notaria.com` ; confirmer l'adresse définitive et la propriété du domaine.
-6. ✅ **Filtrage extrême droite** : RN (`rassemblementnational.fr`) et UDR (`udr.fr`), sous-domaines compris ; liste complétable dans `group_vars/all.yml`.
+6. ✅ **Filtrage extrême droite** : RN (`rassemblementnational.fr`) et UDR (`udr.fr`), sous-domaines compris ; liste complétable dans `group_vars/all/reglages.yml`.
 7. **Charte graphique** de l'étude (logo, couleurs) pour le fond d'écran et l'écran de connexion ?
 7. ✅ **Outils notariaux** : la clé REAL fonctionne sous tous les systèmes ; le LRA actuel ne fonctionne pas sous Linux, un **nouveau LRA 100 % web** (Linux, macOS, Windows) est en développement. Le déploiement Linux suit son calendrier.

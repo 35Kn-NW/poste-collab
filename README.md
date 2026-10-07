@@ -2,7 +2,7 @@
 
 Déploiement automatisé d'un poste de travail Linux **professionnel** à partir d'une installation fraîche, pensé pour un environnement de bureau soumis au secret professionnel (offices notariaux) et contraint d'utiliser Microsoft 365.
 
-> **Statut : cadrage.** Les décisions sont consignées dans [`docs/NOTES.md`](docs/NOTES.md), le plan de travail dans [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **Statut : lot 1 disponible (v0.1.0)** : socle, nettoyage, apparence, Zen, Qalculate!. Les décisions sont consignées dans [`docs/NOTES.md`](docs/NOTES.md), le plan de travail dans [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Objectifs
 
@@ -30,25 +30,44 @@ Le déploiement couvre :
 |---|---|
 | Distribution | **Ubuntu 26.04 LTS** — plan B : Debian 13 |
 | Bureau | **GNOME 50** (Wayland), style clair, accent bleu-vert, icônes Papirus, inspiré d'Archcraft sans hack GTK (cf. notes §15) |
-| Orchestration | `bootstrap.sh` → **`ansible-pull`** depuis ce dépôt |
+| Orchestration | `bootstrap.sh` → `git` + **`ansible-playbook`** : le poste récupère ce dépôt et s'applique la configuration |
 | Chiffrement disque | **LUKS** activé à l'installation (obligatoire) |
 
-## Utilisation (cible)
+## Installer un poste
+
+Sur un poste **Ubuntu 26.04** fraîchement installé (disque chiffré), depuis la session d'un utilisateur administrateur :
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/35Kn-NW/Linux-collab/main/bootstrap.sh | sudo bash
+wget -O bootstrap.sh https://github.com/35Kn-NW/Linux-collab/releases/latest/download/bootstrap.sh
 ```
 
-> Pas encore disponible : voir la [roadmap](docs/ROADMAP.md).
+```bash
+bash bootstrap.sh
+```
 
-## Structure prévue
+Le script ouvre sa propre fenêtre de terminal (logo, barre de progression générale, défilement des étapes), demande le mot de passe administrateur puis installe le poste. Il peut être **relancé sans risque** : seules les différences sont appliquées.
+
+- Journaux : `/var/log/linux-collab/`
+- Réglages propres à l'étude, **hors dépôt** : `/etc/linux-collab/local.yml`, par exemple :
+
+```yaml
+fond_ecran_fichier: /etc/linux-collab/fond-etude.webp
+logo_ecran_connexion: /etc/linux-collab/logo.png
+```
+
+- Sans interface graphique (SSH) : `LC_SANS_FENETRE=1 bash bootstrap.sh`
+
+## Structure
 
 ```
 linux-collab/
-├── bootstrap.sh          # installe ansible, lance ansible-pull
+├── bootstrap.sh          # fenêtre d'installation, Ansible, récupération du dépôt
+├── ansible.cfg           # affichage poste_notaire, journal
+├── callback_plugins/     # affichage : logo, barre de progression, défilement des étapes
 ├── site.yml              # playbook principal
-├── group_vars/all.yml    # paramètres : paquets à purger, domaines bloqués, options…
-├── group_vars/theme.yml  # style visuel : accent, icônes, curseur, polices, fonds, palette
+├── group_vars/all/
+│   ├── reglages.yml      # paquets à purger, moteur de recherche, domaines bloqués…
+│   └── theme.yml         # style visuel : accent, icônes, curseur, polices, fond, dock
 ├── roles/
 │   ├── base/             # mises à jour auto, ufw, fwupd, AppArmor, sauvegarde NAS
 │   ├── purge/            # jeux, logiciels inutiles, clients OneDrive

@@ -1,0 +1,3 @@
+---
+lc_fond_source: "{{ fond_ecran_fichier | default('', true) or (playbook_dir ~ '/files/wallpaper/provisoire.svg') }}"
+lc_fond: "/usr/share/backgrounds/linux-collab/fond{{ lc_fond_source | splitext | last }}"

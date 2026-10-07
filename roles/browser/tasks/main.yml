@@ -1,0 +1,37 @@
+---
+- name: Ajouter le dépôt Flathub
+  community.general.flatpak_remote:
+    name: flathub
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+    method: system
+    state: present
+
+- name: Installer Zen Browser
+  community.general.flatpak:
+    name: app.zen_browser.zen
+    remote: flathub
+    method: system
+    state: present
+  when: not lc_conteneur
+
+- name: Créer le dossier des stratégies de Zen
+  ansible.builtin.file:
+    path: "{{ zen_dossier_strategies }}"
+    state: directory
+    mode: "0755"
+
+- name: Appliquer les stratégies de Zen (recherche, OneDrive, IA, DNS)
+  ansible.builtin.copy:
+    content: "{{ zen_strategies | to_nice_json(indent=2) }}"
+    dest: "{{ zen_dossier_strategies }}/policies.json"
+    mode: "0644"
+
+- name: Faire de Zen le navigateur par défaut
+  community.general.ini_file:
+    path: /etc/xdg/mimeapps.list
+    section: Default Applications
+    option: "{{ item }}"
+    value: app.zen_browser.zen.desktop
+    no_extra_spaces: true
+    mode: "0644"
+  loop: "{{ navigateur_types }}"
