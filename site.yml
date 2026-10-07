@@ -1,0 +1,18 @@
+---
+# Poste collaborateur notaire : point d'entrée Ansible (lancé par bootstrap.sh).
+- name: Poste collaborateur notaire
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  pre_tasks:
+    - name: Détecter un environnement de test (conteneur)
+      ansible.builtin.set_fact:
+        lc_conteneur: "{{ ansible_virtualization_type | default('') in ['docker', 'container', 'podman'] }}"
+
+  roles:
+    - base
+    - purge
+    - branding
+    - browser
+    - tools

@@ -1,0 +1,30 @@
+# Géré par linux-collab (group_vars/all/theme.yml) : ne pas modifier à la main.
+[org/gnome/desktop/interface]
+color-scheme='{{ theme.style }}'
+accent-color='{{ theme.accent }}'
+icon-theme='{{ theme.icones }}'
+cursor-theme='{{ theme.curseur }}'
+font-name='{{ theme.police_interface }}'
+document-font-name='{{ theme.police_documents }}'
+monospace-font-name='{{ theme.police_terminal }}'
+
+[org/gnome/desktop/background]
+picture-uri='file://{{ lc_fond }}'
+picture-uri-dark='file://{{ lc_fond }}'
+picture-options='zoom'
+
+[org/gnome/desktop/screensaver]
+picture-uri='file://{{ lc_fond }}'
+lock-enabled=true
+lock-delay=uint32 0
+
+[org/gnome/desktop/session]
+idle-delay=uint32 {{ verrouillage_apres_secondes }}
+
+[org/gnome/shell]
+favorite-apps=[{% for application in dock_applications %}'{{ application }}'{{ ', ' if not loop.last }}{% endfor %}]
+
+[org/gnome/shell/extensions/dash-to-dock]
+dock-position='LEFT'
+extend-height=true
+dock-fixed=true

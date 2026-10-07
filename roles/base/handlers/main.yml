@@ -1,0 +1,5 @@
+---
+# Partagé par les rôles qui déposent des réglages dans /etc/dconf/db.
+- name: Mettre à jour dconf
+  ansible.builtin.command: dconf update
+  changed_when: true

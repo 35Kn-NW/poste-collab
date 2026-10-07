@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2160" width="3840" height="2160">
+  <!-- Fond provisoire, remplacé par celui de l'étude via fond_ecran_fichier. -->
+  <defs>
+    <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4f8f9"/>
+      <stop offset="1" stop-color="#dcecef"/>
+    </linearGradient>
+  </defs>
+  <rect width="3840" height="2160" fill="url(#ciel)"/>
+  <circle cx="3200" cy="420" r="900" fill="#d3eaee" opacity="0.6"/>
+  <path d="M0 1500 C 900 1250 1700 1800 3840 1400 L 3840 2160 L 0 2160 Z" fill="#c9e4e9"/>
+  <path d="M0 1720 C 1100 1520 2200 1980 3840 1640 L 3840 2160 L 0 2160 Z" fill="#a9d4dc"/>
+  <path d="M0 1920 C 1300 1780 2500 2100 3840 1860 L 3840 2160 L 0 2160 Z" fill="#2190a4" opacity="0.35"/>
+  <path d="M1500 1160 C 1700 900 2100 860 2260 1040 C 2360 1160 2260 1300 2140 1250 C 2060 1215 2080 1120 2160 1120"
+        fill="none" stroke="#a8865a" stroke-width="22" stroke-linecap="round" opacity="0.55"/>
+</svg>
