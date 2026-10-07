@@ -15,7 +15,18 @@
 #   LC_SANS_FENETRE   1 = rester dans le terminal courant
 set -Eeuo pipefail
 
-readonly DEPOT_URL="${LC_DEPOT_URL:-git@github.com:35Kn-NW/poste-collab.git}"
+# Jeton GitHub (gh auth token) : alternative à la clé de lecture. Transmis à la fenêtre
+# d'installation par un fichier temporaire lisible du seul utilisateur, aussitôt supprimé.
+JETON_GITHUB="${LC_JETON_GITHUB:-}"
+if [[ -z "$JETON_GITHUB" && -n "${LC_JETON_FICHIER:-}" && -f "$LC_JETON_FICHIER" ]]; then
+  JETON_GITHUB=$(<"$LC_JETON_FICHIER")
+  rm -f "$LC_JETON_FICHIER"
+fi
+if [[ -n "$JETON_GITHUB" ]]; then
+  readonly DEPOT_URL="${LC_DEPOT_URL:-https://github.com/35Kn-NW/poste-collab.git}"
+else
+  readonly DEPOT_URL="${LC_DEPOT_URL:-git@github.com:35Kn-NW/poste-collab.git}"
+fi
 readonly DEPOT_REF="${LC_DEPOT_REF:-main}"
 readonly SCRIPT_URL="https://github.com/35Kn-NW/poste-collab/releases/latest/download/installer-linux.sh"
 readonly DEPOT=/var/lib/poste-collab/depot
@@ -66,8 +77,14 @@ ouvrir_fenetre() {
     wget -qO "$script" "$SCRIPT_URL" 2>/dev/null || curl -fsSLo "$script" "$SCRIPT_URL" || return 1
   fi
 
+  local jeton_fichier=""
+  if [[ -n "$JETON_GITHUB" ]]; then
+    jeton_fichier=$(mktemp -t poste-collab-jeton.XXXXXX)
+    chmod 600 "$jeton_fichier"
+    printf '%s' "$JETON_GITHUB" > "$jeton_fichier"
+  fi
   local commande=(env LC_DANS_FENETRE=1 LC_DEPOT_URL="$DEPOT_URL" LC_DEPOT_REF="$DEPOT_REF"
-    LC_CLE_DEPOT="${LC_CLE_DEPOT:-}" bash "$script")
+    LC_CLE_DEPOT="${LC_CLE_DEPOT:-}" LC_JETON_FICHIER="$jeton_fichier" bash "$script")
   if command -v ptyxis >/dev/null; then
     ptyxis --new-window -- "${commande[@]}" >/dev/null 2>&1 &
   elif command -v gnome-terminal >/dev/null; then
@@ -221,6 +238,10 @@ recuperer_depot() {
   ssh+=" -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOTES_CONNUS"
   local git=(env GIT_TERMINAL_PROMPT=0 GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=30
     "GIT_SSH_COMMAND=$ssh" git)
+  if [[ -n "$JETON_GITHUB" ]]; then
+    # Jeton passé pour cette seule commande : jamais écrit dans la configuration du dépôt.
+    git+=(-c "http.extraHeader=Authorization: Basic $(printf 'x-access-token:%s' "$JETON_GITHUB" | base64 -w0)")
+  fi
   "${SUDO[@]}" mkdir -p "$(dirname "$DEPOT")" "$JOURNAUX"
   if [[ -d "$DEPOT/.git" ]]; then
     "${SUDO[@]}" "${git[@]}" -C "$DEPOT" fetch -q --depth 1 origin "$DEPOT_REF" &&

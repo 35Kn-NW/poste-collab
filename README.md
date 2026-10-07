@@ -26,6 +26,18 @@ Un nouveau poste doit être opérationnel avec **une seule commande** après l'i
 
 ## Installer un poste Linux
 
+### En une commande (avec un compte GitHub autorisé sur le dépôt)
+
+Sur Ubuntu 26.04 fraîchement installé, dans un terminal :
+
+```bash
+sudo apt-get install -y gh && (gh auth status >/dev/null 2>&1 || gh auth login -h github.com -p https -w) && gh release download -R 35Kn-NW/poste-collab -p installer-linux.sh -O /tmp/installer-linux.sh --clobber && LC_JETON_GITHUB=$(gh auth token) bash /tmp/installer-linux.sh
+```
+
+La commande installe l'outil GitHub, demande **une seule fois** de se connecter (un code à valider dans le navigateur), télécharge le script de la **dernière version publiée**, puis lance l'installation. Le jeton GitHub n'est jamais enregistré dans le dépôt cloné sur le poste.
+
+### Avec la clé de lecture (postes de l'étude, sans compte GitHub)
+
 Prérequis : Ubuntu 26.04 fraîchement installé (disque chiffré), et les deux fichiers fournis par l'administrateur, placés dans le même dossier :
 
 - `installer-linux.sh` : le script d'installation, figé sur une version publiée ;
