@@ -23,7 +23,7 @@ readonly TITRE="Installation poste collaborateur notaire"
 readonly VERSION_UBUNTU=26.04
 
 # Copie de files/ui/logo.txt : le dépôt n'est pas encore récupéré à ce stade.
-readonly LOGO='                               ▄▄▄▄▄▄▄▄
+readonly LOGO_VAGUE='                               ▄▄▄▄▄▄▄▄
                         ▄▄▀▀▀▀▀        ▀▀▄▄
                   ▄▄▀▀▀▀                   ▀▄
             ▄▄▀▀▀▀                  ▄▄▄▄     █
@@ -100,7 +100,7 @@ ui_init() {
   local n=0 ligne
   if (( LIGNES >= 26 )); then
     echo; n=1
-    while IFS= read -r ligne; do centrer "$VAGUE$ligne$RAZ" "${#ligne}"; n=$((n + 1)); done <<< "$LOGO"
+    while IFS= read -r ligne; do centrer "$VAGUE$ligne$RAZ" "${#ligne}"; n=$((n + 1)); done <<< "$LOGO_VAGUE"
   fi
   local titre=${TITRE^^} sous="Ubuntu $VERSION_UBUNTU · GNOME 50 · déploiement automatisé"
   echo
@@ -168,7 +168,7 @@ attendre_fermeture() {
 # --- Étapes de préparation -------------------------------------------------
 
 verifier_systeme() {
-  # Lu dans un sous-shell : /etc/os-release définit aussi LOGO.
+  # Lu dans un sous-shell pour ne pas mélanger ses variables avec celles du script.
   local id version nom
   IFS='|' read -r id version nom < <(. /etc/os-release && echo "${ID:-}|${VERSION_ID:-}|${PRETTY_NAME:-inconnu}")
   if [[ "$id" != ubuntu || "$version" != "$VERSION_UBUNTU" ]]; then
