@@ -26,30 +26,13 @@ Un nouveau poste doit être opérationnel avec **une seule commande** après l'i
 
 ## Installer un poste Linux
 
-### En une commande (avec un compte GitHub autorisé sur le dépôt)
-
-Sur Ubuntu 26.04 fraîchement installé, dans un terminal :
+Sur Ubuntu 26.04 fraîchement installé (disque chiffré), depuis la session d'un utilisateur administrateur, dans un terminal :
 
 ```bash
-sudo apt-get install -y gh && (gh auth status >/dev/null 2>&1 || gh auth login -h github.com -p https -w) && gh release download -R 35Kn-NW/poste-collab -p installer-linux.sh -O /tmp/installer-linux.sh --clobber && LC_JETON_GITHUB=$(gh auth token) bash /tmp/installer-linux.sh
+wget -qO /tmp/installer-linux.sh https://github.com/35Kn-NW/poste-collab/releases/latest/download/installer-linux.sh && bash /tmp/installer-linux.sh
 ```
 
-La commande installe l'outil GitHub, demande **une seule fois** de se connecter (un code à valider dans le navigateur), télécharge le script de la **dernière version publiée**, puis lance l'installation. Le jeton GitHub n'est jamais enregistré dans le dépôt cloné sur le poste.
-
-### Avec la clé de lecture (postes de l'étude, sans compte GitHub)
-
-Prérequis : Ubuntu 26.04 fraîchement installé (disque chiffré), et les deux fichiers fournis par l'administrateur, placés dans le même dossier :
-
-- `installer-linux.sh` : le script d'installation, figé sur une version publiée ;
-- `cle-depot` : la **clé de lecture** du dépôt (le dépôt est privé ; la clé ne permet que la lecture).
-
-Puis, depuis la session d'un utilisateur administrateur :
-
-```bash
-bash installer-linux.sh
-```
-
-Le script ouvre sa propre fenêtre de terminal (logo, barre de progression générale, défilement des étapes), demande le mot de passe administrateur puis installe le poste. Il peut être **relancé sans risque** : seules les différences sont appliquées.
+La commande télécharge le script de la **dernière version publiée** (figé sur cette version du dépôt), puis lance l'installation. Le script ouvre sa propre fenêtre de terminal (logo, barre de progression générale, défilement des étapes), demande le mot de passe administrateur puis installe le poste. Il peut être **relancé sans risque** : seules les différences sont appliquées.
 
 - Journaux : `/var/log/poste-collab/`
 - Réglages propres à l'étude, **hors dépôt** : `/etc/poste-collab/local.yml`, par exemple :
@@ -60,7 +43,7 @@ logo_ecran_connexion: /etc/poste-collab/logo.png
 ia_connecteur_url: https://ia.exemple.fr
 ```
 
-- Sans interface graphique (SSH) : `LC_SANS_FENETRE=1 bash installer-linux.sh`
+- Sans interface graphique (SSH) : `LC_SANS_FENETRE=1 bash /tmp/installer-linux.sh`
 
 ## Structure
 
@@ -85,4 +68,4 @@ Chaque release publie le script d'installation de chaque système disponible (`i
 
 ## Confidentialité
 
-Le dépôt est **privé**. Il ne contient néanmoins **aucun secret** (identifiants de tenant, clé de licence ESET, jetons, noms de clients) : ces valeurs sont fournies sur chaque poste, hors dépôt (`/etc/poste-collab/local.yml`, trousseau du système).
+Le dépôt est **public**. Il ne contient **aucun secret** (identifiants de tenant, clé de licence ESET, jetons, noms de clients) : ces valeurs sont fournies sur chaque poste, hors dépôt (`/etc/poste-collab/local.yml`, trousseau du système).

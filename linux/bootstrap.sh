@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # Installation du poste collaborateur notaire : point d'entrée.
 #
-# Usage, depuis la session de l'utilisateur (sans sudo), avec le fichier
-# « cle-depot » (clé de lecture du dépôt privé) placé à côté du script :
-#   bash bootstrap.sh
+# Usage, depuis la session de l'utilisateur (sans sudo) :
+#   wget -qO /tmp/installer-linux.sh https://github.com/35Kn-NW/poste-collab/releases/latest/download/installer-linux.sh && bash /tmp/installer-linux.sh
 # Le script ouvre sa propre fenêtre de terminal, demande le mot de passe
 # administrateur, prépare Ansible puis applique le dépôt sur le poste.
 # Il peut être relancé sans risque : chaque étape est idempotente.
@@ -11,7 +10,8 @@
 # Variables d'environnement (facultatives) :
 #   LC_DEPOT_URL      dépôt à appliquer
 #   LC_DEPOT_REF      branche ou étiquette (figée sur la version publiée)
-#   LC_CLE_DEPOT      chemin de la clé de lecture, si elle n'est pas à côté du script
+#   LC_CLE_DEPOT      clé de lecture, pour un dépôt privé en SSH (sinon « cle-depot » à côté du script)
+#   LC_JETON_GITHUB   jeton GitHub, pour un dépôt privé en HTTPS
 #   LC_SANS_FENETRE   1 = rester dans le terminal courant
 set -Eeuo pipefail
 
@@ -22,11 +22,9 @@ if [[ -z "$JETON_GITHUB" && -n "${LC_JETON_FICHIER:-}" && -f "$LC_JETON_FICHIER"
   JETON_GITHUB=$(<"$LC_JETON_FICHIER")
   rm -f "$LC_JETON_FICHIER"
 fi
-if [[ -n "$JETON_GITHUB" ]]; then
-  readonly DEPOT_URL="${LC_DEPOT_URL:-https://github.com/35Kn-NW/poste-collab.git}"
-else
-  readonly DEPOT_URL="${LC_DEPOT_URL:-git@github.com:35Kn-NW/poste-collab.git}"
-fi
+# Dépôt public : HTTPS par défaut. La clé de lecture (cle-depot) ne sert que si
+# LC_DEPOT_URL désigne un dépôt privé en SSH (git@…).
+readonly DEPOT_URL="${LC_DEPOT_URL:-https://github.com/35Kn-NW/poste-collab.git}"
 readonly DEPOT_REF="${LC_DEPOT_REF:-main}"
 readonly SCRIPT_URL="https://github.com/35Kn-NW/poste-collab/releases/latest/download/installer-linux.sh"
 readonly DEPOT=/var/lib/poste-collab/depot
