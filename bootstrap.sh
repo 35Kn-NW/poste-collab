@@ -168,10 +168,11 @@ attendre_fermeture() {
 # --- Étapes de préparation -------------------------------------------------
 
 verifier_systeme() {
-  # shellcheck source=/dev/null
-  . /etc/os-release
-  if [[ "${ID:-}" != ubuntu || "${VERSION_ID:-}" != "$VERSION_UBUNTU" ]]; then
-    ui_ligne "$VAGUE!$RAZ" "Système détecté : ${PRETTY_NAME:-inconnu} (prévu : Ubuntu $VERSION_UBUNTU)."
+  # Lu dans un sous-shell : /etc/os-release définit aussi LOGO.
+  local id version nom
+  IFS='|' read -r id version nom < <(. /etc/os-release && echo "${ID:-}|${VERSION_ID:-}|${PRETTY_NAME:-inconnu}")
+  if [[ "$id" != ubuntu || "$version" != "$VERSION_UBUNTU" ]]; then
+    ui_ligne "$VAGUE!$RAZ" "Système détecté : $nom (prévu : Ubuntu $VERSION_UBUNTU)."
     local reponse
     read -rp "  Continuer quand même ? [o/N] " reponse </dev/tty || reponse=n
     [[ "$reponse" == [oO]* ]] || echec "Installation annulée."
