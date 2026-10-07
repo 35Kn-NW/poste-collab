@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Installation du poste collaborateur notaire : point d'entrée.
 #
-# Usage, depuis la session de l'utilisateur (sans sudo) :
+# Usage, depuis la session de l'utilisateur (sans sudo), avec le fichier
+# « cle-depot » (clé de lecture du dépôt privé) placé à côté du script :
 #   bash bootstrap.sh
 # Le script ouvre sa propre fenêtre de terminal, demande le mot de passe
 # administrateur, prépare Ansible puis applique le dépôt sur le poste.
@@ -10,15 +11,20 @@
 # Variables d'environnement (facultatives) :
 #   LC_DEPOT_URL      dépôt à appliquer
 #   LC_DEPOT_REF      branche ou étiquette (figée sur la version publiée)
+#   LC_CLE_DEPOT      chemin de la clé de lecture, si elle n'est pas à côté du script
 #   LC_SANS_FENETRE   1 = rester dans le terminal courant
 set -Eeuo pipefail
 
-readonly DEPOT_URL="${LC_DEPOT_URL:-https://github.com/35Kn-NW/Linux-collab.git}"
+readonly DEPOT_URL="${LC_DEPOT_URL:-git@github.com:35Kn-NW/Linux-collab.git}"
 readonly DEPOT_REF="${LC_DEPOT_REF:-main}"
 readonly SCRIPT_URL="https://github.com/35Kn-NW/Linux-collab/releases/latest/download/bootstrap.sh"
 readonly DEPOT=/var/lib/linux-collab/depot
 readonly JOURNAUX=/var/log/linux-collab
 readonly REGLAGES_LOCAUX=/etc/linux-collab/local.yml
+readonly CLE_DEPOT=/etc/linux-collab/cle-depot
+readonly HOTES_CONNUS=/etc/linux-collab/known_hosts
+# Clé d'hôte officielle de GitHub (api.github.com/meta) : aucune confiance aveugle au premier contact.
+readonly CLE_HOTE_GITHUB='github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl'
 readonly TITRE="Installation poste collaborateur notaire"
 readonly VERSION_UBUNTU=26.04
 
@@ -60,7 +66,8 @@ ouvrir_fenetre() {
     wget -qO "$script" "$SCRIPT_URL" 2>/dev/null || curl -fsSLo "$script" "$SCRIPT_URL" || return 1
   fi
 
-  local commande=(env LC_DANS_FENETRE=1 LC_DEPOT_URL="$DEPOT_URL" LC_DEPOT_REF="$DEPOT_REF" bash "$script")
+  local commande=(env LC_DANS_FENETRE=1 LC_DEPOT_URL="$DEPOT_URL" LC_DEPOT_REF="$DEPOT_REF"
+    LC_CLE_DEPOT="${LC_CLE_DEPOT:-}" bash "$script")
   if command -v ptyxis >/dev/null; then
     ptyxis --new-window -- "${commande[@]}" >/dev/null 2>&1 &
   elif command -v gnome-terminal >/dev/null; then
@@ -191,13 +198,35 @@ obtenir_droits() {
   ui_ligne "$VERT✓$RAZ" "Droits administrateur obtenus"
 }
 
+# Installe la clé de lecture du dépôt (fichier « cle-depot » à côté du script,
+# ou LC_CLE_DEPOT) et la clé d'hôte de GitHub. Arrêt clair si elle manque.
+installer_cle() {
+  [[ "$DEPOT_URL" == git@* ]] || return 0
+  local source="${LC_CLE_DEPOT:-}"
+  if [[ -z "$source" && -f "${BASH_SOURCE[0]:-}" ]]; then
+    source="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/cle-depot"
+  fi
+  if [[ -n "$source" && -f "$source" ]]; then
+    "${SUDO[@]}" install -D -m 600 -o root -g root "$source" "$CLE_DEPOT"
+  fi
+  "${SUDO[@]}" test -f "$CLE_DEPOT" ||
+    echec "Clé de lecture du dépôt introuvable : placez le fichier « cle-depot » à côté de bootstrap.sh."
+  printf '%s\n' "$CLE_HOTE_GITHUB" | "${SUDO[@]}" tee "$HOTES_CONNUS" >/dev/null
+  "${SUDO[@]}" chmod 644 "$HOTES_CONNUS"
+}
+
 recuperer_depot() {
+  # Jamais d'invite interactive ; abandon si le débit reste nul 30 s.
+  local ssh="ssh -i $CLE_DEPOT -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=20"
+  ssh+=" -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOTES_CONNUS"
+  local git=(env GIT_TERMINAL_PROMPT=0 GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=30
+    "GIT_SSH_COMMAND=$ssh" git)
   "${SUDO[@]}" mkdir -p "$(dirname "$DEPOT")" "$JOURNAUX"
   if [[ -d "$DEPOT/.git" ]]; then
-    "${SUDO[@]}" git -C "$DEPOT" fetch -q --depth 1 origin "$DEPOT_REF" &&
-      "${SUDO[@]}" git -C "$DEPOT" checkout -qf FETCH_HEAD
+    "${SUDO[@]}" "${git[@]}" -C "$DEPOT" fetch -q --depth 1 origin "$DEPOT_REF" &&
+      "${SUDO[@]}" "${git[@]}" -C "$DEPOT" checkout -qf FETCH_HEAD
   else
-    "${SUDO[@]}" git clone -q --depth 1 --branch "$DEPOT_REF" "$DEPOT_URL" "$DEPOT"
+    "${SUDO[@]}" "${git[@]}" clone -q --depth 1 --branch "$DEPOT_REF" "$DEPOT_URL" "$DEPOT"
   fi
 }
 
@@ -225,7 +254,8 @@ main() {
   ETAPE=3; ui_barre ""
   etape "Mise à jour de la liste des logiciels" "${SUDO[@]}" apt-get -o DPkg::Lock::Timeout=600 update
   etape "Installation d'Ansible et de Git" "${SUDO[@]}" env DEBIAN_FRONTEND=noninteractive \
-    apt-get -o DPkg::Lock::Timeout=600 install -y ansible git
+    apt-get -o DPkg::Lock::Timeout=600 install -y ansible git openssh-client
+  installer_cle
   etape "Récupération du dépôt de configuration ($DEPOT_REF)" recuperer_depot
   local code=0
   appliquer || code=$?
