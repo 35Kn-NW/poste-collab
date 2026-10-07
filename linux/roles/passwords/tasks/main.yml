@@ -1,0 +1,15 @@
+---
+- name: Installer Bitwarden (application de bureau)
+  community.general.flatpak:
+    name: com.bitwarden.desktop
+    remote: flathub
+    method: system
+    state: present
+  when: not lc_conteneur
+
+- name: Indiquer l'adresse du serveur Bitwarden de l'étude
+  ansible.builtin.copy:
+    dest: /etc/poste-collab/bitwarden-serveur
+    content: "{{ bitwarden_serveur }}\n"
+    mode: "0644"
+  when: bitwarden_serveur | length > 0

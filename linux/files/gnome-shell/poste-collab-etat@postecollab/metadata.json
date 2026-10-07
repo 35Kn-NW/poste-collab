@@ -1,0 +1,7 @@
+{
+  "uuid": "poste-collab-etat@postecollab",
+  "name": "État des connexions de l'étude",
+  "description": "Pastilles de couleur dans la barre du haut : REAL, IA métier, Office 365, VPN, base de l'étude.",
+  "shell-version": ["50"],
+  "url": "https://github.com/35Kn-NW/poste-collab"
+}

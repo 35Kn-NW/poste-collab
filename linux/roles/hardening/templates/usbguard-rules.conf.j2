@@ -1,0 +1,10 @@
+# Géré par poste-collab (cf. docs/NOTES.md §16). La première règle applicable est retenue.
+# 1. Tout périphérique comportant du stockage (clé USB, disque, appareil photo) est bloqué.
+block with-interface one-of { 08:*:* 06:*:* }
+
+# 2. Périphériques présents à l'installation.
+{{ lc_usb_presents.stdout | default('') }}
+
+# 3. Périphériques de travail : clavier et souris, concentrateurs, audio, webcam, lecteur de carte
+#    (clé REAL), imprimante, réseau, Bluetooth, périphériques propres aux fabricants.
+allow with-interface all-of { 03:*:* 09:*:* 01:*:* 0e:*:* 0b:*:* 07:*:* 02:*:* 0a:*:* e0:*:* ef:*:* fe:*:* ff:*:* 0d:*:* 10:*:* 11:*:* }

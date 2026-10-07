@@ -1,0 +1,6 @@
+// Géré par poste-collab : seuls les administrateurs installent ou retirent des applications Flatpak.
+polkit.addRule(function (action, subject) {
+    if (action.id.indexOf("org.freedesktop.Flatpak.") === 0 && !subject.isInGroup("sudo")) {
+        return polkit.Result.NO;
+    }
+});

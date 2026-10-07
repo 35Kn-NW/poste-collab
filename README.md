@@ -4,7 +4,7 @@ Scripts de déploiement d'un **poste de travail professionnel de collaborateur d
 
 | Système | Dossier | État |
 |---|---|---|
-| **Linux** (Ubuntu 26.04 LTS, GNOME 50) | [`linux/`](linux/) | ✅ Lot 1 disponible, IA métier en cours (v0.2.0) |
+| **Linux** (Ubuntu 26.04 LTS, GNOME 50) | [`linux/`](linux/) | ✅ Cahier des charges codé (v0.3.0) — validation sur poste pilote : [docs/VALIDATION.md](docs/VALIDATION.md) |
 | **macOS** | `macos/` | 🔜 À venir |
 | **Windows 11** | `windows/` | 🔜 À venir |
 

@@ -35,7 +35,12 @@ Chaque décision indique son **statut** : ✅ retenue · 🟡 à confirmer · �
 
 ---
 
-## 3. Messagerie : Evolution ✅
+## 3. Messagerie : Evolution ✅ (livré en linux-v0.3.0)
+
+**Mise en œuvre (rôle `mail`)** : Evolution et son module **Microsoft 365** (`evolution-ews`, API Graph) installés ; Evolution est la messagerie, l'agenda et le carnet d'adresses par défaut, épinglé dans le dock. À la **première session**, un assistant propose de relier le compte : l'utilisateur saisit son adresse, choisit le type « Microsoft 365 » et se connecte avec son compte de l'étude (authentification Microsoft). L'agenda ainsi relié **alimente le briefing de la journée**. Les comptes en ligne GNOME sont restreints, car leur fournisseur Microsoft 365 donnerait accès à OneDrive.
+
+🟡 Selon la politique du tenant, l'administrateur Microsoft 365 devra peut-être **autoriser l'application Evolution** dans Entra ID (consentement administrateur) lors de la première connexion.
+
 
 - Paquets : `evolution`, `evolution-ews`.
 - Type de compte : **« Microsoft 365 »** (API Microsoft Graph).
@@ -307,6 +312,9 @@ Principe : **défense en profondeur**. Chaque couche suppose que la précédente
 
 ## 17. Gestionnaire de mots de passe : Bitwarden officiel auto-hébergé ✅
 
+**Livré en linux-v0.3.0 (rôle `passwords` et stratégies de Zen)** : application Bitwarden (Flatpak) et extension Bitwarden dans Zen, installées d'office ; enregistrement des mots de passe dans Zen désactivé. L'adresse du serveur de l'étude (`bitwarden_serveur`) sera renseignée quand il sera en service ; d'ici là, chaque collaborateur choisit « auto-hébergé » à la connexion.
+
+
 Exigence : les coffres doivent être **stockés sur les serveurs de l'étude / de son éditeur**, avec une ergonomie au niveau de Proton Pass. Proton Pass ne peut pas être auto-hébergé : il est écarté ❌ pour l'étude.
 
 ### Le « protocole » : Bitwarden
@@ -393,6 +401,9 @@ Une **charte d'usage de l'IA** signée par chaque collaborateur complète donc c
 ---
 
 ## 20. Moteur de recherche : DuckDuckGo France ✅
+
+**Zen, en complément (linux-v0.3.0)** : mode **HTTPS uniquement** imposé et verrouillé (fonction intégrée au navigateur, plus fiable qu'une extension « HTTPS partout », abandonnée) ; extensions **Bitwarden**, **Privacy Badger** et **uBlock Origin** installées d'office ; **toute autre extension est bloquée** (liste blanche, cf. section 19).
+
 
 **DuckDuckGo, en français et région France, par défaut dans tous les navigateurs** (Zen et Edge).
 

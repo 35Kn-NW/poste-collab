@@ -1,0 +1,18 @@
+---
+- name: Redémarrer Unbound
+  ansible.builtin.systemd_service:
+    name: unbound
+    state: restarted
+  when: not lc_conteneur
+
+- name: Redémarrer la résolution DNS
+  ansible.builtin.systemd_service:
+    name: systemd-resolved
+    state: restarted
+  when: not lc_conteneur
+
+- name: Recharger NetworkManager
+  ansible.builtin.systemd_service:
+    name: NetworkManager
+    state: reloaded
+  when: not lc_conteneur

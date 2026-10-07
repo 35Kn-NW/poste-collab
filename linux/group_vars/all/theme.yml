@@ -23,6 +23,10 @@ verrouillage_apres_secondes: 300
 # Applications épinglées dans le dock (identifiants .desktop) ; complétées par les lots suivants.
 dock_applications:
   - app.zen_browser.zen.desktop
+  - org.gnome.Evolution.desktop
+  - com.bitwarden.desktop.desktop
+  - microsoft-edge.desktop
+  - onlyoffice-desktopeditors.desktop
   - org.gnome.Nautilus.desktop
   - qalculate-gtk.desktop
   - io.github.postecollab.PosteIA.desktop

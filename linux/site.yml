@@ -12,8 +12,18 @@
 
   roles:
     - base
+    - hardening
     - purge
     - branding
     - browser
     - tools
+    - mail
+    - m365
+    - office
+    - passwords
+    - chat
+    - webfilter
+    - antivirus
+    - power
+    - sauvegarde
     - agent

@@ -31,6 +31,16 @@ ROLES = {
     "branding": "Apparence",
     "browser": "Navigateurs",
     "tools": "Outils",
+    "mail": "Messagerie",
+    "passwords": "Mots de passe",
+    "hardening": "Sécurité",
+    "m365": "Microsoft 365",
+    "office": "Bureautique",
+    "chat": "Messagerie sécurisée",
+    "webfilter": "Filtrage web",
+    "antivirus": "Antivirus",
+    "power": "Extinction du soir",
+    "sauvegarde": "Sauvegarde",
     "agent": "IA métier",
 }
 

@@ -1,4 +1,11 @@
 ---
+- name: Créer les dossiers du poste (configuration, outils)
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop: [/etc/poste-collab, /usr/lib/poste-collab]
+
 - name: Mettre à jour la liste des logiciels
   ansible.builtin.apt:
     update_cache: true
@@ -44,6 +51,42 @@
     name: unattended-upgrades
     enabled: true
     state: started
+  when: not lc_conteneur
+
+- name: Mettre à jour chaque jour les applications Flatpak (Zen, Bitwarden)
+  ansible.builtin.copy:
+    dest: "/etc/systemd/system/{{ item.nom }}"
+    content: "{{ item.contenu }}"
+    mode: "0644"
+  loop:
+    - nom: poste-collab-flatpak.service
+      contenu: |
+        [Unit]
+        Description=Mise à jour des applications Flatpak (poste-collab)
+        After=network-online.target
+        Wants=network-online.target
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/bin/flatpak update --system --noninteractive --assumeyes
+    - nom: poste-collab-flatpak.timer
+      contenu: |
+        [Unit]
+        Description=Mise à jour quotidienne des applications Flatpak
+        [Timer]
+        OnCalendar=daily
+        RandomizedDelaySec=1h
+        Persistent=true
+        [Install]
+        WantedBy=timers.target
+  loop_control:
+    label: "{{ item.nom }}"
+
+- name: Activer la mise à jour des applications Flatpak
+  ansible.builtin.systemd_service:
+    name: poste-collab-flatpak.timer
+    enabled: true
+    state: started
+    daemon_reload: true
   when: not lc_conteneur
 
 - name: Pare-feu · refuser tout trafic entrant

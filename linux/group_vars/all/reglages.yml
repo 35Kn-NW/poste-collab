@@ -31,6 +31,22 @@ blocage_onedrive_zen:
   - "*://1drv.ms/*"
   - "*://*.sharepoint.com/personal/*"   # espaces OneDrive Entreprise
 
+# Extensions de Zen : installées d'office et seules autorisées (toutes les autres sont bloquées).
+extensions_zen:
+  "{446900e4-71c2-419f-a6a7-df9c091e268b}":      # Bitwarden
+    installation_mode: force_installed
+    install_url: https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi
+  "jid1-MnnxcxisBPnSXQ@jetpack":                 # Privacy Badger
+    installation_mode: force_installed
+    install_url: https://addons.mozilla.org/firefox/downloads/latest/privacy-badger17/latest.xpi
+  "uBlock0@raymondhill.net":                     # uBlock Origin
+    installation_mode: force_installed
+    install_url: https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi
+
+# --- Gestionnaire de mots de passe (rôle passwords, cf. docs/NOTES.md §17) ---
+# Adresse du serveur Bitwarden auto-hébergé de l'étude : vide tant qu'il n'est pas en service.
+bitwarden_serveur: ""
+
 # --- IA métier sur le poste (rôle agent, cf. docs/NOTES.md §10 et docs/IA-POSTE.md) ---
 ia_nom: IA métier
 # Adresse du serveur de l'IA métier (connecteur) : vide tant que le serveur n'est pas prêt.
@@ -44,6 +60,15 @@ ia_dossier_brouillons: "~/Documents/Brouillons IA"
 ia_briefing_a_l_ouverture: true
 ia_rappel_minutes: 15
 
+# --- Pastilles d'état de la barre du haut (agent + extension GNOME) ---
+# REAL : hôte du réseau sécurisé des notaires à joindre ; base : serveur de la base de l'étude ;
+# bureau : hôte joignable seulement depuis l'étude (sert à savoir si le poste est à distance).
+# Hôte vide : pastille grise « sonde non configurée ».
+sondes_etat:
+  real: {hote: "", port: 443}
+  base: {hote: "", port: 5432}
+  bureau: {hote: "", port: 443}
+
 # --- Raccourcis clavier (rôle tools) ---
 raccourcis_clavier:
   - id: qalculate
@@ -55,7 +80,98 @@ raccourcis_clavier:
     commande: poste-ia panneau
     touche: "<Super>space"
 
+# --- Durcissement (rôle hardening, cf. docs/NOTES.md §16) ---
+# USBGuard : claviers, souris, webcams, audio, lecteurs de carte (clé REAL), imprimantes autorisés ;
+# clés USB et disques de stockage bloqués.
+usbguard_actif: true
+# Programmes téléchargés non exécutables (/home, /tmp, /var/tmp) : empêche AppImage, IA locales, binaires.
+noexec_actif: true
+bluetooth_actif: true
+# Ubuntu Pro (Livepatch, maintenance étendue) : jeton à placer dans /etc/poste-collab/local.yml.
+ubuntu_pro_jeton: ""
+
+# --- Antivirus (rôle antivirus, cf. docs/NOTES.md §4) ---
+# À renseigner dans /etc/poste-collab/local.yml : adresse de l'installateur ESET (console ESET PROTECT
+# ou ESET) et clé de licence. Vides : antivirus non installé, signalé dans /etc/poste-collab/.
+eset_installateur_url: ""
+eset_licence: ""
+
+# --- Microsoft 365 (rôle m365, cf. docs/NOTES.md §9 et §12) ---
+# Applications web installées par Edge (fenêtre dédiée, icône dans le lanceur).
+applications_web:
+  - {fallback_app_name: Microsoft 365, url: "https://www.microsoft365.com/?auth=2"}
+  - {fallback_app_name: Outlook, url: "https://outlook.office.com/mail/"}
+  - {fallback_app_name: Word, url: "https://www.microsoft365.com/launch/word?auth=2"}
+  - {fallback_app_name: Excel, url: "https://www.microsoft365.com/launch/excel?auth=2"}
+  - {fallback_app_name: PowerPoint, url: "https://www.microsoft365.com/launch/powerpoint?auth=2"}
+  - {fallback_app_name: Teams, url: "https://teams.microsoft.com/v2/"}
+  - {fallback_app_name: Lifesize, url: "https://call.lifesize.com/"}
+  - {fallback_app_name: WhatsApp, url: "https://web.whatsapp.com/"}
+# Liens ouverts dans Edge (Microsoft 365, visioconférence, WhatsApp) ; tous les autres dans Zen.
+liens_vers_edge:
+  - teams.microsoft.com
+  - teams.live.com
+  - outlook.office.com
+  - outlook.office365.com
+  - microsoft365.com
+  - office.com
+  - cloud.microsoft
+  - sharepoint.com
+  - lifesize.com
+  - web.whatsapp.com
+# Inscription Intune et authentification unique Entra ID : dépend de la licence Microsoft 365 de l'étude.
+intune_actif: false
+# Polices Microsoft (Arial, Times New Roman…) : leur licence doit être acceptée par l'étude.
+polices_microsoft_accepter_licence: false
+
+# --- Messagerie sécurisée (rôle chat, cf. docs/NOTES.md §8) ---
+chat_securise: signal          # signal, ou « aucun »
+
+# --- Extinction automatique (rôle power, cf. docs/NOTES.md §18) ---
+extinction_heure: "21:00"
+extinction_delai_secondes: 60
+extinction_report_minutes: 30
+
+# --- Sauvegarde (rôle sauvegarde, cf. docs/NOTES.md §16) ---
+# Partage du NAS de l'étude, par exemple smb://nas.etude.lan/sauvegardes. Vide : non configurée.
+sauvegarde_nas_uri: ""
+
+# --- IA : domaines bloqués partout (DNS, Zen, Edge), sauf l'IA métier de l'étude (cf. docs/NOTES.md §19) ---
+domaines_ia_bloques:
+  - chatgpt.com
+  - openai.com
+  - claude.ai
+  - anthropic.com
+  - chat.mistral.ai
+  - gemini.google.com
+  - bard.google.com
+  - copilot.microsoft.com
+  - perplexity.ai
+  - deepseek.com
+  - duck.ai
+  - meta.ai
+  - grok.com
+  - x.ai
+  - poe.com
+  - character.ai
+  - you.com
+  - huggingface.co
+
 # --- Filtrage web (rôle webfilter, cf. docs/NOTES.md §21) ---
+filtrage_actif: true
+# Listes de blocage par catégorie (format RPZ, mises à jour chaque jour).
+listes_blocage:
+  - {nom: pornographie, url: "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/nsfw.txt"}
+  - {nom: jeux-argent, url: "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/gambling.mini.txt"}
+  - {nom: menaces, url: "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/tif.mini.txt"}
+  - {nom: arnaques, url: "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/fake.txt"}
+  - {nom: contournement-dns, url: "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/rpz/doh.txt"}
+# Résolveur de second niveau, chiffré (DNS over TLS), qui filtre aussi logiciels malveillants et contenus adultes.
+dns_amont:
+  - "1.1.1.3@853#family.cloudflare-dns.com"
+  - "1.0.0.3@853#family.cloudflare-dns.com"
+# Domaines internes de l'étude, résolus par son propre serveur DNS : - {domaine: etude.lan, serveur: 192.168.1.1}
+dns_domaines_internes: []
 
 # Sites d'extrême droite : liste tenue par l'étude (décision du 7 octobre 2026).
 # Chaque domaine bloque aussi tous ses sous-domaines.

@@ -64,6 +64,9 @@ class Connecteur:
         except ValueError as erreur:
             raise ConnecteurIndisponible("réponse illisible du serveur") from erreur
 
+    def etat(self) -> dict:
+        return self._json("GET", "/etat", delai=8) or {}
+
     def briefing(self, jour: date) -> dict:
         return self._json("GET", f"/briefing?date={jour.isoformat()}") or {}
 

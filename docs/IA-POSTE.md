@@ -51,6 +51,10 @@ L'IA métier de l'étude tourne sur des **serveurs distants**. Le poste n'embarq
 
 Base : `{ia_connecteur_url}/poste/v1`. Toutes les requêtes portent `Authorization: Bearer <jeton du poste>` et `User-Agent: poste-ia/<version>`. Corps et réponses en JSON UTF-8 ; dates et heures en ISO 8601 (heure locale, ou avec fuseau).
 
+### 4.0 `GET /etat`
+
+Simple contrôle de disponibilité, appelé toutes les 30 secondes pour la pastille « IA métier » de la barre du haut. Réponse `200` avec un JSON libre (par exemple `{"version": "…"}`).
+
 ### 4.1 `GET /briefing?date=AAAA-MM-JJ`
 
 Vision globale de la journée du collaborateur, préparée par l'IA.

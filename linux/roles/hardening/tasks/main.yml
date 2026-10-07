@@ -1,0 +1,146 @@
+---
+- name: Installer les outils de durcissement
+  ansible.builtin.apt:
+    name: [libpam-pwquality, auditd, usbguard]
+    state: present
+    lock_timeout: 600
+
+- name: Paramètres du noyau durcis
+  ansible.builtin.copy:
+    src: sysctl.conf
+    dest: /etc/sysctl.d/60-poste-collab.conf
+    mode: "0644"
+  notify: Appliquer les paramètres du noyau
+
+- name: Créer le dossier des règles de mot de passe
+  ansible.builtin.file:
+    path: /etc/security/pwquality.conf.d
+    state: directory
+    mode: "0755"
+
+- name: Mots de passe robustes (12 caractères, 3 types)
+  ansible.builtin.copy:
+    dest: /etc/security/pwquality.conf.d/poste-collab.conf
+    content: |
+      # Géré par poste-collab (cf. docs/NOTES.md §16).
+      minlen = 12
+      minclass = 3
+      dictcheck = 1
+      usercheck = 1
+    mode: "0644"
+
+- name: Créer le dossier de réglage des journaux
+  ansible.builtin.file:
+    path: /etc/systemd/journald.conf.d
+    state: directory
+    mode: "0755"
+
+- name: Journaux conservés après redémarrage
+  ansible.builtin.copy:
+    dest: /etc/systemd/journald.conf.d/poste-collab.conf
+    content: |
+      [Journal]
+      Storage=persistent
+      SystemMaxUse=500M
+    mode: "0644"
+
+- name: Surveiller les fichiers sensibles (auditd)
+  ansible.builtin.copy:
+    src: audit.rules
+    dest: /etc/audit/rules.d/poste-collab.rules
+    mode: "0640"
+  notify: Recharger les règles d'audit
+
+- name: Créer le dossier des règles d'autorisation
+  ansible.builtin.file:
+    path: /etc/polkit-1/rules.d
+    state: directory
+    mode: "0755"
+
+- name: Installation de logiciels réservée aux administrateurs (Flatpak)
+  ansible.builtin.copy:
+    src: flatpak.rules
+    dest: /etc/polkit-1/rules.d/50-poste-collab-flatpak.rules
+    mode: "0644"
+
+- name: Inventorier les services
+  ansible.builtin.service_facts:
+  when: not lc_conteneur
+
+- name: Désactiver les services inutiles (annonce réseau, découverte d'imprimantes)
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  loop: [avahi-daemon.service, avahi-daemon.socket, cups-browsed.service]
+  when: not lc_conteneur and item in ansible_facts.services
+
+- name: Désactiver le Bluetooth
+  ansible.builtin.systemd_service:
+    name: bluetooth.service
+    enabled: false
+    state: stopped
+  when: not lc_conteneur and not bluetooth_actif and 'bluetooth.service' in ansible_facts.services
+
+- name: Relever les périphériques USB déjà branchés
+  ansible.builtin.command: usbguard generate-policy
+  register: lc_usb_presents
+  changed_when: false
+  failed_when: false
+  when: usbguard_actif and not lc_conteneur
+
+- name: Règles USB (stockage bloqué, périphériques de travail autorisés)
+  ansible.builtin.template:
+    src: usbguard-rules.conf.j2
+    dest: /etc/usbguard/rules.conf
+    mode: "0600"
+    force: false   # règles ajustées par l'administrateur conservées
+  when: usbguard_actif and not lc_conteneur
+  notify: Redémarrer USBGuard
+
+- name: Activer USBGuard
+  ansible.builtin.systemd_service:
+    name: usbguard
+    enabled: true
+    state: started
+  when: usbguard_actif and not lc_conteneur
+
+- name: /home et /var/tmp sans exécution (pris en compte au prochain démarrage)
+  ansible.posix.mount:
+    path: "{{ item }}"
+    src: "{{ item }}"
+    fstype: none
+    opts: bind,nosuid,nodev,noexec
+    state: present
+  loop: [/home, /var/tmp]
+  when: noexec_actif
+
+- name: Créer le dossier de réglage de /tmp
+  ansible.builtin.file:
+    path: /etc/systemd/system/tmp.mount.d
+    state: directory
+    mode: "0755"
+  when: noexec_actif
+
+- name: /tmp sans exécution
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/tmp.mount.d/poste-collab.conf
+    content: |
+      [Mount]
+      Options=mode=1777,strictatime,nosuid,nodev,noexec,size=50%,nr_inodes=1m
+    mode: "0644"
+  when: noexec_actif
+
+- name: Rattacher le poste à Ubuntu Pro
+  ansible.builtin.command: "pro attach {{ ubuntu_pro_jeton }}"
+  args:
+    creates: /var/lib/ubuntu-advantage/private/machine-token.json
+  no_log: true
+  when: ubuntu_pro_jeton | length > 0 and not lc_conteneur
+
+- name: Activer Livepatch (correctifs du noyau sans redémarrage)
+  ansible.builtin.command: pro enable livepatch --assume-yes
+  register: lc_livepatch
+  changed_when: "'already enabled' not in lc_livepatch.stdout"
+  failed_when: false
+  when: ubuntu_pro_jeton | length > 0 and not lc_conteneur

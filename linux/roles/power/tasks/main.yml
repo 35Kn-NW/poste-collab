@@ -1,0 +1,44 @@
+---
+- name: Créer le dossier des outils du poste
+  ansible.builtin.file:
+    path: /usr/lib/poste-collab
+    state: directory
+    mode: "0755"
+
+- name: Installer l'extinction du soir
+  ansible.builtin.template:
+    src: extinction.sh.j2
+    dest: /usr/lib/poste-collab/extinction
+    mode: "0755"
+
+- name: Programmer l'extinction à {{ extinction_heure }}
+  ansible.builtin.copy:
+    dest: "/etc/systemd/system/{{ item.nom }}"
+    content: "{{ item.contenu }}"
+    mode: "0644"
+  loop:
+    - nom: poste-collab-extinction.service
+      contenu: |
+        [Unit]
+        Description=Extinction du soir avec fenêtre de report (poste-collab)
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/lib/poste-collab/extinction
+    - nom: poste-collab-extinction.timer
+      contenu: |
+        [Unit]
+        Description=Extinction du poste à {{ extinction_heure }}
+        [Timer]
+        OnCalendar=*-*-* {{ extinction_heure }}:00
+        [Install]
+        WantedBy=timers.target
+  loop_control:
+    label: "{{ item.nom }}"
+
+- name: Activer l'extinction du soir
+  ansible.builtin.systemd_service:
+    name: poste-collab-extinction.timer
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: not lc_conteneur

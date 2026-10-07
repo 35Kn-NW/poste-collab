@@ -24,6 +24,7 @@ class Config:
     dossier_brouillons: str = "~/Documents/Brouillons IA"
     briefing_a_l_ouverture: bool = True
     rappel_minutes: int = 15
+    sondes: dict = field(default_factory=dict)
     dossier_etat: Path = field(default_factory=lambda: _xdg("XDG_STATE_HOME", ".local/state"))
     dossier_donnees: Path = field(default_factory=lambda: _xdg("XDG_DATA_HOME", ".local/share"))
 

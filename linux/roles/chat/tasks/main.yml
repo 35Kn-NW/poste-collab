@@ -1,0 +1,22 @@
+---
+- name: Clé de signature Signal
+  ansible.builtin.get_url:
+    url: https://updates.signal.org/desktop/apt/keys.asc
+    dest: /usr/share/keyrings/signal-desktop.asc
+    mode: "0644"
+  when: chat_securise == 'signal'
+
+- name: Dépôt Signal
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/signal-desktop.list
+    content: "deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop.asc] https://updates.signal.org/desktop/apt xenial main\n"
+    mode: "0644"
+  when: chat_securise == 'signal'
+
+- name: Installer Signal
+  ansible.builtin.apt:
+    name: signal-desktop
+    state: present
+    update_cache: true
+    lock_timeout: 600
+  when: chat_securise == 'signal'

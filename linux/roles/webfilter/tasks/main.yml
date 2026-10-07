@@ -1,0 +1,142 @@
+---
+- name: Installer le résolveur DNS local (Unbound)
+  ansible.builtin.apt:
+    name: [unbound, unbound-anchor, ca-certificates, curl]
+    state: present
+    lock_timeout: 600
+  when: filtrage_actif
+
+- name: Créer le dossier des listes de blocage
+  ansible.builtin.file:
+    path: /var/lib/unbound/poste-collab
+    state: directory
+    owner: unbound
+    group: unbound
+    mode: "0755"
+  when: filtrage_actif
+
+- name: Créer le dossier des outils du poste
+  ansible.builtin.file:
+    path: /usr/lib/poste-collab
+    state: directory
+    mode: "0755"
+  when: filtrage_actif
+
+- name: Installer la mise à jour des listes de blocage
+  ansible.builtin.template:
+    src: listes-maj.sh.j2
+    dest: /usr/lib/poste-collab/listes-dns-maj
+    mode: "0755"
+  when: filtrage_actif
+
+- name: Télécharger les listes de blocage
+  ansible.builtin.command: /usr/lib/poste-collab/listes-dns-maj --sans-rechargement
+  args:
+    creates: "/var/lib/unbound/poste-collab/{{ listes_blocage[0].nom }}.rpz"
+  when: filtrage_actif
+
+- name: Domaines bloqués par l'étude (IA, extrême droite, OneDrive)
+  ansible.builtin.template:
+    src: blocages.conf.j2
+    dest: /etc/unbound/poste-collab-blocages.conf
+    mode: "0644"
+  when: filtrage_actif
+  notify: Redémarrer Unbound
+
+- name: Configurer Unbound (listes, DNS chiffré vers le résolveur filtrant)
+  ansible.builtin.template:
+    src: unbound.conf.j2
+    dest: /etc/unbound/unbound.conf.d/poste-collab.conf
+    mode: "0644"
+  when: filtrage_actif
+  notify: Redémarrer Unbound
+
+- name: Clé de confiance DNSSEC de la racine
+  ansible.builtin.command: unbound-anchor -a /var/lib/unbound/root.key
+  args:
+    creates: /var/lib/unbound/root.key
+  register: lc_ancre
+  failed_when: lc_ancre.rc > 1   # 1 : clé créée ou mise à jour
+  when: filtrage_actif
+
+- name: Droits sur la clé de confiance
+  ansible.builtin.file:
+    path: /var/lib/unbound/root.key
+    owner: unbound
+    group: unbound
+    mode: "0644"
+  when: filtrage_actif
+
+- name: Vérifier la configuration d'Unbound
+  ansible.builtin.command: unbound-checkconf
+  changed_when: false
+  when: filtrage_actif
+
+- name: Créer les dossiers de configuration réseau
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop: [/etc/systemd/resolved.conf.d, /etc/NetworkManager/conf.d]
+  when: filtrage_actif
+
+- name: Faire passer toutes les requêtes DNS par le résolveur local
+  ansible.builtin.copy:
+    dest: /etc/systemd/resolved.conf.d/poste-collab.conf
+    content: |
+      # Géré par poste-collab : toutes les requêtes passent par Unbound (filtrage, DNS chiffré).
+      [Resolve]
+      DNS=127.0.0.1
+      Domains=~.
+    mode: "0644"
+  when: filtrage_actif
+  notify: Redémarrer la résolution DNS
+
+- name: Empêcher le réseau d'imposer un autre serveur DNS
+  ansible.builtin.copy:
+    dest: /etc/NetworkManager/conf.d/poste-collab-dns.conf
+    content: |
+      # Géré par poste-collab.
+      [global-dns-domain-*]
+      servers=127.0.0.1
+    mode: "0644"
+  when: filtrage_actif
+  notify: Recharger NetworkManager
+
+- name: Mettre à jour les listes chaque jour
+  ansible.builtin.copy:
+    dest: "/etc/systemd/system/{{ item.nom }}"
+    content: "{{ item.contenu }}"
+    mode: "0644"
+  loop:
+    - nom: poste-collab-listes-dns.service
+      contenu: |
+        [Unit]
+        Description=Mise à jour des listes de blocage DNS (poste-collab)
+        After=network-online.target
+        Wants=network-online.target
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/lib/poste-collab/listes-dns-maj
+    - nom: poste-collab-listes-dns.timer
+      contenu: |
+        [Unit]
+        Description=Mise à jour quotidienne des listes de blocage DNS
+        [Timer]
+        OnCalendar=daily
+        RandomizedDelaySec=2h
+        Persistent=true
+        [Install]
+        WantedBy=timers.target
+  loop_control:
+    label: "{{ item.nom }}"
+  when: filtrage_actif
+
+- name: Activer Unbound et la mise à jour des listes
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+    daemon_reload: true
+  loop: [unbound.service, poste-collab-listes-dns.timer]
+  when: filtrage_actif and not lc_conteneur

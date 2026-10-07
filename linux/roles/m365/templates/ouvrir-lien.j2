@@ -1,0 +1,10 @@
+#!/bin/sh
+# Géré par poste-collab : Microsoft 365, visioconférence et WhatsApp dans Edge ; tout le reste dans Zen.
+lien="${1:-}"
+hote=$(printf '%s' "$lien" | sed -E 's#^[a-zA-Z]+://([^/:?#]*).*#\1#' | tr 'A-Z' 'a-z')
+case "$hote" in
+{% for domaine in liens_vers_edge %}
+  {{ domaine }}|*.{{ domaine }}) exec microsoft-edge "$lien" ;;
+{% endfor %}
+esac
+exec flatpak run app.zen_browser.zen "$lien"

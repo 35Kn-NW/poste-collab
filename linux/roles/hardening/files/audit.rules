@@ -1,0 +1,9 @@
+# Géré par poste-collab : modifications des comptes, des droits et de la configuration du poste.
+-w /etc/passwd -p wa -k comptes
+-w /etc/shadow -p wa -k comptes
+-w /etc/group -p wa -k comptes
+-w /etc/sudoers -p wa -k droits
+-w /etc/sudoers.d/ -p wa -k droits
+-w /etc/poste-collab/ -p wa -k poste-collab
+-w /etc/usbguard/ -p wa -k usb
+-w /etc/apt/sources.list.d/ -p wa -k logiciels

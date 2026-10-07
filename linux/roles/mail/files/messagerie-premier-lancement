@@ -1,0 +1,30 @@
+#!/bin/sh
+# Géré par poste-collab : à la première session, ouvre Evolution pour relier
+# la messagerie Microsoft 365 de l'étude (une seule fois par utilisateur).
+etat="${XDG_STATE_HOME:-$HOME/.local/state}/poste-collab"
+marque="$etat/messagerie-proposee"
+sources="${XDG_CONFIG_HOME:-$HOME/.config}/evolution/sources"
+
+[ -e "$marque" ] && exit 0
+mkdir -p "$etat"
+
+# Compte Microsoft 365 déjà présent : rien à faire.
+if grep -qsl "microsoft365" "$sources"/*.source 2>/dev/null; then
+  touch "$marque"
+  exit 0
+fi
+
+# Laisse le briefing de la journée s'afficher d'abord.
+sleep 20
+zenity --question --title="Messagerie de l'étude" --width=480 --no-markup \
+  --ok-label="Configurer maintenant" --cancel-label="Plus tard" \
+  --text="Reliez votre messagerie et votre agenda Microsoft 365 à ce poste.
+
+1. Evolution s'ouvre sur son assistant.
+2. Saisissez votre adresse de l'étude.
+3. Au type de compte, choisissez « Microsoft 365 » (et non « Exchange Web Services »).
+4. Connectez-vous avec votre compte de l'étude.
+
+Votre agenda alimentera ensuite le briefing de la journée." || exit 0
+touch "$marque"
+exec evolution

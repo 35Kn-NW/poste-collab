@@ -4,3 +4,13 @@
 /org/gnome/desktop/screensaver/lock-enabled
 /org/gnome/desktop/screensaver/lock-delay
 /org/gnome/desktop/session/idle-delay
+/org/gnome/desktop/interface/color-scheme
+/org/gnome/desktop/interface/accent-color
+/org/gnome/desktop/interface/icon-theme
+/org/gnome/desktop/interface/cursor-theme
+/org/gnome/desktop/interface/font-name
+/org/gnome/desktop/interface/document-font-name
+/org/gnome/desktop/interface/monospace-font-name
+/org/gnome/shell/extensions/dash-to-dock/dock-position
+/org/gnome/shell/extensions/dash-to-dock/extend-height
+/org/gnome/shell/extensions/dash-to-dock/dock-fixed

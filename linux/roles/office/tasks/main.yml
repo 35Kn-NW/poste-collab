@@ -1,0 +1,34 @@
+---
+- name: Clé de signature ONLYOFFICE
+  ansible.builtin.get_url:
+    url: https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE
+    dest: /usr/share/keyrings/onlyoffice.asc
+    mode: "0644"
+
+- name: Dépôt ONLYOFFICE
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/onlyoffice.list
+    content: "deb [signed-by=/usr/share/keyrings/onlyoffice.asc] https://download.onlyoffice.com/repo/debian squeeze main\n"
+    mode: "0644"
+
+- name: Installer ONLYOFFICE et les polices compatibles Microsoft (Carlito, Caladea)
+  ansible.builtin.apt:
+    name: [onlyoffice-desktopeditors, fonts-crosextra-carlito, fonts-crosextra-caladea, fonts-liberation]
+    state: present
+    update_cache: true
+    lock_timeout: 600
+
+- name: Accepter la licence des polices Microsoft (décision de l'étude)
+  ansible.builtin.debconf:
+    name: ttf-mscorefonts-installer
+    question: msttcorefonts/accepted-mscorefonts-eula
+    vtype: select
+    value: "true"
+  when: polices_microsoft_accepter_licence
+
+- name: Installer les polices Microsoft
+  ansible.builtin.apt:
+    name: ttf-mscorefonts-installer
+    state: present
+    lock_timeout: 600
+  when: polices_microsoft_accepter_licence

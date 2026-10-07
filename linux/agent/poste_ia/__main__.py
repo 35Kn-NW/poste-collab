@@ -18,6 +18,7 @@ Bureau (application GNOME, une seule instance par session) :
 Administration :
   briefing-texte       briefing du jour en texte
   outils               outils disponibles pour l'IA et leur niveau
+  etat                 état des connexions (REAL, IA métier, Office 365, VPN, base de l'étude)
   journal              actions récentes de l'IA
   arret | reprise      arrêt d'urgence de l'IA sur ce poste, ou reprise
   jeton                enregistre dans le trousseau le jeton du connecteur (lu sur l'entrée standard)
@@ -67,6 +68,12 @@ def main(argv=None) -> int:
         return 0
     if commande == "briefing-texte":
         return _briefing_texte(config)
+    if commande == "etat":
+        from .etat import Sondes
+        from .sources.connecteur import Connecteur
+        for cle, service in Sondes(config, Connecteur(config)).mesurer()["services"].items():
+            print(f"{service['libelle']:12} {service['niveau']:8} {service['detail']}")
+        return 0
     if commande == "outils":
         for outil in _moteur(config).lister():
             print(f"{outil.niveau.name.lower():8} {outil.nom:20} {outil.description}")

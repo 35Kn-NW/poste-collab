@@ -1,0 +1,13 @@
+# Géré par poste-collab : domaines bloqués par l'étude (sous-domaines compris).
+# IA externes (seule l'IA métier de l'étude est autorisée)
+{% for domaine in domaines_ia_bloques %}
+local-zone: "{{ domaine }}." always_nxdomain
+{% endfor %}
+# Sites d'extrême droite (décision de l'étude)
+{% for domaine in blocage_extreme_droite %}
+local-zone: "{{ domaine }}." always_nxdomain
+{% endfor %}
+# OneDrive (interdit)
+local-zone: "onedrive.live.com." always_nxdomain
+local-zone: "onedrive.com." always_nxdomain
+local-zone: "1drv.ms." always_nxdomain

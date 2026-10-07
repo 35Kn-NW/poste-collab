@@ -1,0 +1,29 @@
+---
+- name: Télécharger l'installateur ESET
+  ansible.builtin.get_url:
+    url: "{{ eset_installateur_url }}"
+    dest: /var/cache/poste-collab-eset.bin
+    mode: "0700"
+  when: eset_installateur_url | length > 0 and not lc_conteneur
+
+- name: Installer ESET Endpoint Antivirus for Linux
+  ansible.builtin.command: /var/cache/poste-collab-eset.bin -y -f -g
+  args:
+    creates: /opt/eset/eea/sbin/lic
+  when: eset_installateur_url | length > 0 and not lc_conteneur
+
+- name: Activer la licence ESET
+  ansible.builtin.command: "/opt/eset/eea/sbin/lic -k {{ eset_licence }}"
+  changed_when: true
+  failed_when: false
+  no_log: true
+  when: eset_licence | length > 0 and eset_installateur_url | length > 0 and not lc_conteneur
+
+- name: Signaler que l'antivirus reste à configurer
+  ansible.builtin.copy:
+    dest: /etc/poste-collab/ANTIVIRUS-A-CONFIGURER
+    content: |
+      ESET n'est pas installé : renseigner eset_installateur_url et eset_licence
+      dans /etc/poste-collab/local.yml, puis relancer l'installation.
+    mode: "0644"
+  when: eset_installateur_url | length == 0

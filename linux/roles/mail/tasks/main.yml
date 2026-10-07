@@ -1,0 +1,67 @@
+---
+- name: Installer Evolution et son module Microsoft 365
+  ansible.builtin.apt:
+    name:
+      - evolution
+      - evolution-ews          # contient le module « Microsoft 365 » (API Graph)
+      - evolution-plugins
+    state: present
+    lock_timeout: 600
+
+- name: Faire d'Evolution la messagerie et l'agenda par défaut
+  community.general.ini_file:
+    path: /etc/xdg/mimeapps.list
+    section: Default Applications
+    option: "{{ item }}"
+    value: org.gnome.Evolution.desktop
+    no_extra_spaces: true
+    mode: "0644"
+  loop:
+    - x-scheme-handler/mailto
+    - text/calendar
+    - text/x-vcard
+    - text/vcard
+
+- name: Créer le dossier des outils du poste
+  ansible.builtin.file:
+    path: /usr/lib/poste-collab
+    state: directory
+    mode: "0755"
+
+- name: Installer l'assistant de première connexion à la messagerie
+  ansible.builtin.copy:
+    src: messagerie-premier-lancement
+    dest: /usr/lib/poste-collab/messagerie-premier-lancement
+    mode: "0755"
+
+- name: Lancer l'assistant à l'ouverture de session (une seule fois par utilisateur)
+  ansible.builtin.copy:
+    dest: /etc/xdg/autostart/poste-collab-messagerie.desktop
+    content: |
+      [Desktop Entry]
+      Type=Application
+      Name=Messagerie de l'étude : première connexion
+      Exec=/usr/lib/poste-collab/messagerie-premier-lancement
+      Icon=org.gnome.Evolution
+      NoDisplay=true
+      X-GNOME-Autostart-enabled=true
+    mode: "0644"
+
+- name: Réserver les comptes en ligne GNOME à la messagerie (pas de OneDrive par ce biais)
+  ansible.builtin.copy:
+    dest: /etc/dconf/db/local.d/20-poste-collab-comptes
+    content: |
+      # Géré par poste-collab : le fournisseur Microsoft 365 de GNOME donnerait accès à OneDrive (interdit).
+      # La messagerie Microsoft 365 passe par Evolution.
+      [org/gnome/online-accounts]
+      whitelisted-providers=['imap_smtp']
+    mode: "0644"
+  notify: Mettre à jour dconf
+
+- name: Verrouiller ce réglage
+  ansible.builtin.copy:
+    dest: /etc/dconf/db/local.d/locks/20-poste-collab-comptes
+    content: |
+      /org/gnome/online-accounts/whitelisted-providers
+    mode: "0644"
+  notify: Mettre à jour dconf

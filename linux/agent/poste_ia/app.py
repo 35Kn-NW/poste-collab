@@ -13,6 +13,7 @@ from gi.repository import Adw, Gio, GLib  # noqa: E402
 
 from . import APP_ID  # noqa: E402
 from .config import charger  # noqa: E402
+from .etat import Sondes, publier  # noqa: E402
 from .journal import Journal  # noqa: E402
 from .outils import Moteur  # noqa: E402
 from .permissions import ArretUrgence, Refus, activer_arret, arret_actif, lever_arret  # noqa: E402
@@ -58,6 +59,7 @@ class Application(Adw.Application):
             self.add_action(action)
         GLib.timeout_add_seconds(60, self._chaque_minute)
         self.actualiser()
+        threading.Thread(target=self._boucle_etat, daemon=True).start()
         if self.connecteur.actif:
             threading.Thread(target=self._boucle_outils, daemon=True).start()
 
@@ -180,6 +182,17 @@ class Application(Adw.Application):
                 corps = " · ".join(p for p in (element.titre, element.detail) if p)
                 self.notifier(f"Rendez-vous à {element.debut:%H:%M}", corps, "app.briefing")
         return True
+
+    # --- État des connexions (pastilles de la barre du haut) ------------------
+
+    def _boucle_etat(self):
+        sondes = Sondes(self.config, self.connecteur)
+        while True:
+            try:
+                publier(sondes.mesurer())
+            except Exception:
+                pass
+            time.sleep(30)
 
     # --- Connecteur : outils demandés par l'IA métier ------------------------
 

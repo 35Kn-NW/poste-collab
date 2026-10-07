@@ -21,9 +21,19 @@ zen_strategies:
           Alias: "@ddg"
       Default: "{{ recherche_nom }}"
     WebsiteFilter:
-      Block: "{{ blocage_onedrive_zen }}"
+      Block: "{{ zen_sites_bloques }}"
+    # Sites en HTTPS uniquement, réglage verrouillé (remplace une extension « HTTPS partout »).
+    HttpsOnlyMode: force_enabled
+    # Les mots de passe vont dans Bitwarden, jamais dans le navigateur.
+    PasswordManagerEnabled: false
+    OfferToSaveLogins: false
+    ExtensionSettings: "{{ zen_extensions }}"
+# Extensions validées installées d'office ; toute autre extension est bloquée.
+zen_extensions: "{{ extensions_zen | combine({'*': {'installation_mode': 'blocked', 'blocked_install_message': 'Seules les extensions validées par l’étude sont autorisées.'}}) }}"
+zen_sites_bloques: >-
+  {{ blocage_onedrive_zen
+     + (domaines_ia_bloques + blocage_extreme_droite) | map('regex_replace', '^(.*)$', '*://\\1/*') | list
+     + (domaines_ia_bloques + blocage_extreme_droite) | map('regex_replace', '^(.*)$', '*://*.\\1/*') | list }}
 navigateur_types:
   - text/html
   - application/xhtml+xml
-  - x-scheme-handler/http
-  - x-scheme-handler/https

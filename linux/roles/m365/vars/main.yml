@@ -1,0 +1,23 @@
+---
+edge_url_bloquees: "{{ ['onedrive.live.com', 'onedrive.com', '1drv.ms', 'sharepoint.com/personal'] + domaines_ia_bloques + blocage_extreme_droite }}"
+edge_applications_web: >-
+  {{ (applications_web + ([{'url': ia_connecteur_url, 'fallback_app_name': ia_nom}] if ia_connecteur_url else []))
+     | map('combine', {'default_launch_container': 'window', 'create_desktop_shortcut': true}) | list }}
+edge_strategies:
+  DefaultSearchProviderEnabled: true
+  DefaultSearchProviderName: "{{ recherche_nom }}"
+  DefaultSearchProviderSearchURL: "{{ recherche_url }}"
+  DefaultSearchProviderSuggestURL: "{{ recherche_suggestions_url }}"
+  DnsOverHttpsMode: "off"
+  URLBlocklist: "{{ edge_url_bloquees }}"
+  HubsSidebarEnabled: false
+  CopilotPageContext: false
+  Microsoft365CopilotChatIconEnabled: false
+  PasswordManagerEnabled: false
+  PersonalizationReportingEnabled: false
+  DiagnosticData: 0
+  HideFirstRunExperience: true
+  ExtensionInstallBlocklist: ["*"]
+  ExtensionInstallForcelist:
+    - "jbkfoedolllekgbhcbcoahefnbanhhlh;https://edge.microsoft.com/extensionwebstorebase/v1/crx"
+  WebAppInstallForceList: "{{ edge_applications_web }}"

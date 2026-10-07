@@ -1,0 +1,14 @@
+.pc-etats { spacing: 6px; }
+
+.pc-pastille {
+  border-radius: 999px;
+  padding: 1px 10px;
+  font-size: 9pt;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.pc-ok { background-color: #2e9e5b; }
+.pc-degrade { background-color: #e0951a; }
+.pc-erreur { background-color: #d23f3f; }
+.pc-inactif, .pc-inconnu { background-color: #8a8f94; }

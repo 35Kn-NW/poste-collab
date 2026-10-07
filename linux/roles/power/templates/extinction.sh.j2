@@ -1,0 +1,53 @@
+#!/bin/bash
+# Géré par poste-collab (cf. docs/NOTES.md §18) : à {{ extinction_heure }}, chaque session ouverte voit une
+# fenêtre d'une minute. « Je travaille encore » reporte de {{ extinction_report_minutes }} minutes (sans limite) ;
+# sans réponse, le poste s'éteint (les mises à jour s'installent pendant l'extinction).
+# --essai : affiche la décision sans éteindre.
+set -u
+DELAI={{ extinction_delai_secondes }}
+REPORT={{ extinction_report_minutes }}
+essai="${1:-}"
+
+sessions_graphiques() {
+  loginctl list-sessions --no-legend 2>/dev/null | while read -r id uid utilisateur _; do
+    type=$(loginctl show-session "$id" -p Type --value 2>/dev/null)
+    actif=$(loginctl show-session "$id" -p Active --value 2>/dev/null)
+    if [[ "$type" =~ ^(wayland|x11)$ && "$actif" == yes ]]; then
+      echo "$uid $utilisateur"
+    fi
+  done
+}
+
+demander() {
+  local uid=$1 utilisateur=$2 dossier="/run/user/$1" affichage
+  affichage=$(ls "$dossier" 2>/dev/null | grep -m1 -E '^wayland-[0-9]+$')
+  timeout $((DELAI + 15)) runuser -u "$utilisateur" -- env \
+    XDG_RUNTIME_DIR="$dossier" DBUS_SESSION_BUS_ADDRESS="unix:path=$dossier/bus" \
+    WAYLAND_DISPLAY="${affichage:-wayland-0}" DISPLAY=:0 \
+    zenity --question --title="Extinction du poste" --width=460 --timeout="$DELAI" --no-markup \
+      --icon=system-shutdown --ok-label="Je travaille encore" --cancel-label="Éteindre maintenant" \
+      --text="Il est {{ extinction_heure }} : ce poste va s'éteindre dans une minute pour économiser l'énergie.
+
+Les documents non enregistrés seront perdus.
+Les mises à jour seront installées pendant l'extinction."
+}
+
+reporter=0
+while read -r uid utilisateur; do
+  [ -n "$uid" ] || continue
+  if demander "$uid" "$utilisateur"; then
+    reporter=1
+  fi
+done < <(sessions_graphiques)
+
+if [ "$reporter" = 1 ]; then
+  logger -t poste-collab "Extinction reportée de ${REPORT} minutes"
+  if [ "$essai" = "--essai" ]; then echo "report"; exit 0; fi
+  systemd-run --quiet --on-active="${REPORT}min" --unit="poste-collab-extinction-report-$(date +%s)" \
+    /usr/lib/poste-collab/extinction
+  exit 0
+fi
+
+logger -t poste-collab "Extinction automatique du soir"
+if [ "$essai" = "--essai" ]; then echo "extinction"; exit 0; fi
+exec systemctl poweroff --check-inhibitors=no

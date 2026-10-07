@@ -1,0 +1,32 @@
+# Géré par poste-collab (cf. docs/NOTES.md §21).
+server:
+    interface: 127.0.0.1
+    port: 53
+    access-control: 127.0.0.0/8 allow
+    module-config: "respip validator iterator"
+    tls-cert-bundle: /etc/ssl/certs/ca-certificates.crt
+    hide-identity: yes
+    hide-version: yes
+    qname-minimisation: yes
+    prefetch: yes
+    include: /etc/unbound/poste-collab-blocages.conf
+
+{% for liste in listes_blocage %}
+rpz:
+    name: {{ liste.nom }}
+    zonefile: /var/lib/unbound/poste-collab/{{ liste.nom }}.rpz
+    rpz-action-override: nxdomain
+
+{% endfor %}
+{% for zone in dns_domaines_internes %}
+forward-zone:
+    name: "{{ zone.domaine }}."
+    forward-addr: {{ zone.serveur }}
+
+{% endfor %}
+forward-zone:
+    name: "."
+    forward-tls-upstream: yes
+{% for serveur in dns_amont %}
+    forward-addr: {{ serveur }}
+{% endfor %}

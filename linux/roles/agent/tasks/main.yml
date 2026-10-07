@@ -86,6 +86,23 @@
       Version=2
     mode: "0644"
 
+- name: Installer l'extension « État des connexions » (pastilles de la barre du haut)
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/files/gnome-shell/poste-collab-etat@postecollab"
+    dest: /usr/share/gnome-shell/extensions/
+    mode: "0644"
+    directory_mode: "0755"
+
+- name: Activer l'extension pour tous les utilisateurs
+  ansible.builtin.copy:
+    dest: /etc/dconf/db/local.d/30-poste-collab-extensions
+    content: |
+      # Géré par poste-collab. Les extensions d'Ubuntu (dock, icônes) restent actives : elles relèvent du mode de session.
+      [org/gnome/shell]
+      enabled-extensions=['poste-collab-etat@postecollab']
+    mode: "0644"
+  notify: Mettre à jour dconf
+
 - name: Créer le dossier des extensions de Fichiers
   ansible.builtin.file:
     path: /usr/share/nautilus-python/extensions

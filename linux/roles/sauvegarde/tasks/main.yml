@@ -1,0 +1,26 @@
+---
+- name: Installer l'outil de sauvegarde
+  ansible.builtin.apt:
+    name: deja-dup
+    state: present
+    lock_timeout: 600
+  when: sauvegarde_nas_uri | length > 0
+
+- name: Sauvegarde quotidienne chiffrée vers le NAS de l'étude
+  ansible.builtin.copy:
+    dest: /etc/dconf/db/local.d/40-poste-collab-sauvegarde
+    content: |
+      # Géré par poste-collab (cf. docs/NOTES.md §16). Le mot de passe de chiffrement est choisi
+      # par le collaborateur à la première sauvegarde.
+      [org/gnome/deja-dup]
+      backend='remote'
+      periodic=true
+      periodic-period=1
+      delete-after=90
+
+      [org/gnome/deja-dup/remote]
+      uri='{{ sauvegarde_nas_uri }}'
+      folder='$HOSTNAME/$USER'
+    mode: "0644"
+  when: sauvegarde_nas_uri | length > 0
+  notify: Mettre à jour dconf

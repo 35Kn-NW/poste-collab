@@ -1,0 +1,94 @@
+---
+- name: Empêcher Edge de modifier lui-même ses sources de logiciels
+  ansible.builtin.copy:
+    dest: /etc/default/microsoft-edge
+    content: |
+      repo_add_once="false"
+      repo_reenable_on_distupgrade="false"
+    mode: "0644"
+
+- name: Clé de signature Microsoft
+  ansible.builtin.get_url:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    dest: /usr/share/keyrings/microsoft.asc
+    mode: "0644"
+
+- name: Vérifier si Edge est déjà installé
+  ansible.builtin.stat:
+    path: /usr/bin/microsoft-edge
+  register: lc_edge
+
+- name: Dépôt Microsoft Edge (Edge le gère ensuite lui-même)
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/microsoft-edge.list
+    content: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.asc] https://packages.microsoft.com/repos/edge stable main\n"
+    mode: "0644"
+  when: not lc_edge.stat.exists
+
+- name: Dépôt Microsoft (Intune, authentification Entra ID)
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/microsoft-prod.list
+    content: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.asc] https://packages.microsoft.com/ubuntu/26.04/prod resolute main\n"
+    mode: "0644"
+  when: intune_actif
+
+- name: Installer Microsoft Edge
+  ansible.builtin.apt:
+    name: microsoft-edge-stable
+    state: present
+    update_cache: true
+    lock_timeout: 600
+
+- name: Installer le portail Intune (inscription du poste, authentification unique)
+  ansible.builtin.apt:
+    name: intune-portal
+    state: present
+    lock_timeout: 600
+  when: intune_actif
+
+- name: Créer le dossier des stratégies d'Edge
+  ansible.builtin.file:
+    path: /etc/opt/edge/policies/managed
+    state: directory
+    mode: "0755"
+
+- name: Stratégies d'Edge (Microsoft 365, applications web, IA et OneDrive bloqués)
+  ansible.builtin.copy:
+    content: "{{ edge_strategies | to_nice_json(indent=2) }}"
+    dest: /etc/opt/edge/policies/managed/poste-collab.json
+    mode: "0644"
+
+- name: Créer le dossier des outils du poste
+  ansible.builtin.file:
+    path: /usr/lib/poste-collab
+    state: directory
+    mode: "0755"
+
+- name: Installer le routeur de liens (Microsoft 365 et visio dans Edge, le reste dans Zen)
+  ansible.builtin.template:
+    src: ouvrir-lien.j2
+    dest: /usr/lib/poste-collab/ouvrir-lien
+    mode: "0755"
+
+- name: Déclarer le routeur de liens
+  ansible.builtin.copy:
+    dest: /usr/share/applications/poste-collab-liens.desktop
+    content: |
+      [Desktop Entry]
+      Type=Application
+      Name=Navigateur de l'étude
+      Exec=/usr/lib/poste-collab/ouvrir-lien %u
+      Icon=web-browser
+      NoDisplay=true
+      MimeType=x-scheme-handler/http;x-scheme-handler/https;
+    mode: "0644"
+
+- name: Ouvrir les liens web par le routeur
+  community.general.ini_file:
+    path: /etc/xdg/mimeapps.list
+    section: Default Applications
+    option: "{{ item }}"
+    value: poste-collab-liens.desktop
+    no_extra_spaces: true
+    mode: "0644"
+  loop: [x-scheme-handler/http, x-scheme-handler/https]

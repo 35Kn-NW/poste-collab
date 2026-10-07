@@ -1,0 +1,25 @@
+#!/bin/bash
+# Géré par poste-collab : met à jour les listes de blocage DNS. Une liste qui ne se télécharge pas
+# ou semble invalide n'est jamais installée : la précédente est conservée.
+set -u
+dossier=/var/lib/unbound/poste-collab
+mkdir -p "$dossier"
+change=0
+{% for liste in listes_blocage %}
+temporaire=$(mktemp)
+if curl -fsSL --max-time 300 -o "$temporaire" "{{ liste.url }}" && grep -q "SOA" "$temporaire"; then
+  install -m 0644 -o unbound -g unbound "$temporaire" "$dossier/{{ liste.nom }}.rpz"
+  change=1
+else
+  echo "Liste « {{ liste.nom }} » non mise à jour" >&2
+  if [ ! -f "$dossier/{{ liste.nom }}.rpz" ]; then
+    printf '%s\n' '$TTL 3600' '@ SOA localhost. root.localhost. 1 3600 600 86400 3600' '  NS localhost.' \
+      > "$dossier/{{ liste.nom }}.rpz"
+  fi
+fi
+rm -f "$temporaire"
+{% endfor %}
+if [ "$change" = 1 ] && [ "${1:-}" != "--sans-rechargement" ]; then
+  systemctl try-restart unbound.service
+fi
+exit 0
